@@ -20,7 +20,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onKeySelected }) => {
     } else {
         // Fallback if not running in expected environment, assuming true for dev/testing if env var present
         // In real scenario, this block should ideally not be reached if strict prompt constraints are met
-        if(process.env.API_KEY) {
+        if(import.meta.env.VITE_API_KEY) {
              setHasKey(true);
              onKeySelected();
         }
@@ -63,8 +63,8 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onKeySelected }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4">
       <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
-        <div className="mx-auto bg-indigo-900/30 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-          <Key className="w-8 h-8 text-indigo-400" />
+        <div className="mx-auto bg-blue-900/30 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+          <Key className="w-8 h-8 text-blue-400" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">API Key Required</h2>
         <p className="text-slate-400 mb-8">

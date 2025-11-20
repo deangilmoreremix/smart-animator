@@ -114,7 +114,7 @@ const VeoAnimator: React.FC = () => {
       {/* Left Panel: Input & Config */}
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
         <div className="flex items-center space-x-3 mb-6">
-          <Film className="text-indigo-400 w-6 h-6" />
+          <Film className="text-blue-400 w-6 h-6" />
           <h2 className="text-xl font-semibold text-white">Animation Studio</h2>
         </div>
 
@@ -123,12 +123,12 @@ const VeoAnimator: React.FC = () => {
           <label className="block text-sm font-medium text-slate-400 mb-2">Input Image</label>
           {!imagePreview ? (
             <div 
-              className="border-2 border-dashed border-slate-700 rounded-xl p-10 flex flex-col items-center justify-center text-slate-500 hover:border-indigo-500 hover:bg-slate-800/50 transition-all cursor-pointer group"
+              className="border-2 border-dashed border-slate-700 rounded-xl p-10 flex flex-col items-center justify-center text-slate-500 hover:border-blue-500 hover:bg-slate-800/50 transition-all cursor-pointer group"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onClick={() => document.getElementById('fileInput')?.click()}
             >
-              <UploadCloud className="w-12 h-12 mb-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+              <UploadCloud className="w-12 h-12 mb-4 text-slate-600 group-hover:text-blue-400 transition-colors" />
               <p className="text-center font-medium">Click or drag image here</p>
               <p className="text-xs text-slate-600 mt-2">Supports JPG, PNG</p>
               <input 
@@ -160,7 +160,7 @@ const VeoAnimator: React.FC = () => {
           <textarea 
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-4 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none h-32"
+            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-4 text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none h-32"
             placeholder="Describe how the character should move..."
             disabled={isGenerating}
           />
@@ -172,14 +172,14 @@ const VeoAnimator: React.FC = () => {
             <label className="block text-sm font-medium text-slate-400 mb-2">Aspect Ratio</label>
             <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
               <button 
-                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${aspectRatio === AspectRatio.PORTRAIT ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${aspectRatio === AspectRatio.PORTRAIT ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
                 onClick={() => setAspectRatio(AspectRatio.PORTRAIT)}
                 disabled={isGenerating}
               >
                 9:16 (Portrait)
               </button>
               <button 
-                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${aspectRatio === AspectRatio.LANDSCAPE ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
+                className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${aspectRatio === AspectRatio.LANDSCAPE ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
                 onClick={() => setAspectRatio(AspectRatio.LANDSCAPE)}
                 disabled={isGenerating}
               >
@@ -221,7 +221,7 @@ const VeoAnimator: React.FC = () => {
       <div className="flex flex-col h-full">
         <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm flex-grow flex flex-col min-h-[500px]">
           <div className="flex items-center space-x-3 mb-6">
-            <Video className="text-indigo-400 w-6 h-6" />
+            <Video className="text-blue-400 w-6 h-6" />
             <h2 className="text-xl font-semibold text-white">Preview Output</h2>
           </div>
 
@@ -236,10 +236,10 @@ const VeoAnimator: React.FC = () => {
                />
              ) : isGenerating ? (
                <div className="text-center p-8 animate-pulse">
-                 <Loader2 className="w-16 h-16 text-indigo-500 animate-spin mx-auto mb-4" />
+                 <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto mb-4" />
                  <h3 className="text-lg font-medium text-white mb-2">Generating Animation</h3>
                  <p className="text-slate-400 max-w-xs mx-auto">This usually takes about a minute. We are using the Veo 3.1 model to bring your image to life.</p>
-                 <div className="mt-6 text-3xl font-mono text-indigo-300">{formatTime(elapsedTime)}</div>
+                 <div className="mt-6 text-3xl font-mono text-blue-300">{formatTime(elapsedTime)}</div>
                </div>
              ) : (
                <div className="text-center p-8 text-slate-600">

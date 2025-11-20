@@ -5,7 +5,7 @@ export class VeoService {
   private ai: GoogleGenerativeAI | null = null;
 
   private getClient(): GoogleGenerativeAI {
-    const apiKey = process.env.API_KEY;
+    const apiKey = import.meta.env.VITE_API_KEY;
     if (!apiKey) {
       throw new Error("API Key not found. Please select an API Key first.");
     }
@@ -54,7 +54,7 @@ export class VeoService {
 
       // 3. Fetch Authenticated Video
       // We must append the API key to the download link manually
-      const authenticatedUrl = `${videoUri}&key=${process.env.API_KEY}`;
+      const authenticatedUrl = `${videoUri}&key=${import.meta.env.VITE_API_KEY}`;
       
       const response = await fetch(authenticatedUrl);
       if (!response.ok) {
