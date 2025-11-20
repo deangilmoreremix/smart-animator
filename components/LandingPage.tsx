@@ -36,13 +36,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </div>
             </div>
             <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
-              AI Video Generation
+              Bring Your Images to Life
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-                Powered by Veo 3.1
+                AI-Powered Image Animation
               </span>
             </h1>
             <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Create stunning, professional videos from text, images, or extend existing videos with Google's most advanced AI video generation model.
+              Transform still images into stunning animated videos with AI. Upload any photo and watch it come alive with natural motion powered by Google's Veo 3.1.
             </p>
             <button
               onClick={onGetStarted}
@@ -55,104 +55,104 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             <FeatureCard
-              icon={<Video className="w-10 h-10" />}
-              title="Text-to-Video"
-              description="Transform your ideas into videos with just a text prompt. Describe what you want and watch it come to life."
-            />
-            <FeatureCard
               icon={<Film className="w-10 h-10" />}
-              title="Image-to-Video"
-              description="Animate still images with natural motion. Bring photos and artwork to life with realistic movement."
+              title="Upload Any Image"
+              description="Start with your photos, artwork, or designs. Support for all common image formats including JPG, PNG, and WebP."
             />
             <FeatureCard
-              icon={<Layers className="w-10 h-10" />}
-              title="Video Extension"
-              description="Extend existing videos seamlessly. Add more content and continue the story beyond the original footage."
+              icon={<Sparkles className="w-10 h-10" />}
+              title="AI Animation"
+              description="Advanced AI analyzes your image and creates natural, realistic motion. No animation skills required."
+            />
+            <FeatureCard
+              icon={<Video className="w-10 h-10" />}
+              title="Download HD Videos"
+              description="Export your animated videos in 720p or 1080p resolution, ready to share on social media or use in projects."
             />
           </div>
 
           <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-10 mb-20">
             <h2 className="text-3xl font-bold text-white mb-8 text-center">
-              Powerful Features
+              Complete Animation Control
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="bg-blue-500/10 p-3 rounded-lg inline-block mb-3">
                   <Settings className="w-8 h-8 text-blue-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">5 Model Options</h4>
-                <p className="text-slate-400 text-sm">Choose from Veo 3.1, Veo 3, or Veo 2 models with fast variants</p>
+                <h4 className="font-semibold text-white mb-2">Multiple AI Models</h4>
+                <p className="text-slate-400 text-sm">Choose from Veo 3.1, Veo 3, or Veo 2 models optimized for image animation</p>
               </div>
               <div className="text-center">
                 <div className="bg-blue-500/10 p-3 rounded-lg inline-block mb-3">
                   <Zap className="w-8 h-8 text-blue-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">5 Aspect Ratios</h4>
-                <p className="text-slate-400 text-sm">Portrait, Square, Landscape, Ultrawide, and Cinema formats</p>
+                <h4 className="font-semibold text-white mb-2">Any Aspect Ratio</h4>
+                <p className="text-slate-400 text-sm">Portrait for social media, landscape for web, or cinema for dramatic effect</p>
               </div>
               <div className="text-center">
                 <div className="bg-blue-500/10 p-3 rounded-lg inline-block mb-3">
                   <Clock className="w-8 h-8 text-blue-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">Flexible Duration</h4>
-                <p className="text-slate-400 text-sm">Generate videos from 4 to 8 seconds in length</p>
+                <h4 className="font-semibold text-white mb-2">Custom Duration</h4>
+                <p className="text-slate-400 text-sm">Create animations from 4 to 8 seconds perfect for loops and clips</p>
               </div>
               <div className="text-center">
                 <div className="bg-blue-500/10 p-3 rounded-lg inline-block mb-3">
                   <Download className="w-8 h-8 text-blue-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">HD & Full HD</h4>
-                <p className="text-slate-400 text-sm">Export in 720p or 1080p resolution</p>
+                <h4 className="font-semibold text-white mb-2">Professional Quality</h4>
+                <p className="text-slate-400 text-sm">Export in crisp 720p or stunning 1080p resolution</p>
               </div>
             </div>
           </div>
 
           <div className="mb-20">
             <h2 className="text-3xl font-bold text-white mb-8 text-center">
-              Advanced Controls
+              Fine-Tune Your Animations
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
                 <h4 className="font-semibold text-white mb-3 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Reference Images
+                  Motion Prompts
                 </h4>
-                <p className="text-slate-400 text-sm">Upload up to 3 reference images to guide style, content, or asset consistency across generations.</p>
+                <p className="text-slate-400 text-sm">Describe exactly how you want your image to move. Create gentle swaying, dramatic zooms, or complex motion patterns.</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
                 <h4 className="font-semibold text-white mb-3 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Camera Motion
+                  Camera Control
                 </h4>
-                <p className="text-slate-400 text-sm">Define camera movements like pan, tilt, zoom, or tracking shots for cinematic effects.</p>
+                <p className="text-slate-400 text-sm">Add dynamic camera movements like pan, tilt, zoom, or orbit to make your animations more cinematic.</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
                 <h4 className="font-semibold text-white mb-3 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Cinematic Styles
+                  Style References
                 </h4>
-                <p className="text-slate-400 text-sm">Apply visual styles like noir, vintage, or modern aesthetics to your videos.</p>
+                <p className="text-slate-400 text-sm">Upload reference images to guide the animation style and maintain visual consistency.</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
                 <h4 className="font-semibold text-white mb-3 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Negative Prompts
+                  Visual Styles
                 </h4>
-                <p className="text-slate-400 text-sm">Specify what to avoid in your video for better control over the final output.</p>
+                <p className="text-slate-400 text-sm">Apply cinematic styles like film noir, vintage effects, or modern aesthetics to your animated videos.</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
                 <h4 className="font-semibold text-white mb-3 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Seed Control
+                  Precise Control
                 </h4>
-                <p className="text-slate-400 text-sm">Set a seed value for reproducible generations with consistent results.</p>
+                <p className="text-slate-400 text-sm">Use negative prompts to avoid unwanted effects and seed values for reproducible results.</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
                 <h4 className="font-semibold text-white mb-3 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Person Generation
+                  Smart Defaults
                 </h4>
-                <p className="text-slate-400 text-sm">Toggle whether people should appear in your generated videos.</p>
+                <p className="text-slate-400 text-sm">Get great results instantly or customize every detail. Perfect for both beginners and professionals.</p>
               </div>
             </div>
           </div>
@@ -162,23 +162,23 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <Shield className="w-12 h-12 text-blue-400" />
             </div>
             <h2 className="text-3xl font-bold text-white mb-4 text-center">
-              Generation History & Database
+              Your Animation Library
             </h2>
             <p className="text-slate-300 text-center max-w-2xl mx-auto mb-6 leading-relaxed">
-              All your video generations are securely stored in a Supabase database. Track your creations, review parameters, and access your entire generation history anytime.
+              Every animation you create is automatically saved with complete details. Access your entire library anytime, review what worked best, and build on your previous creations.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
               <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 text-center">
-                <p className="text-2xl font-bold text-blue-400 mb-1">Complete Metadata</p>
-                <p className="text-slate-400 text-sm">Every parameter tracked</p>
+                <p className="text-2xl font-bold text-blue-400 mb-1">Auto-Save</p>
+                <p className="text-slate-400 text-sm">Never lose your work</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 text-center">
-                <p className="text-2xl font-bold text-blue-400 mb-1">Secure Storage</p>
-                <p className="text-slate-400 text-sm">Row-level security enabled</p>
+                <p className="text-2xl font-bold text-blue-400 mb-1">Full Details</p>
+                <p className="text-slate-400 text-sm">Settings and parameters saved</p>
               </div>
               <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 text-center">
                 <p className="text-2xl font-bold text-blue-400 mb-1">Easy Access</p>
-                <p className="text-slate-400 text-sm">View history anytime</p>
+                <p className="text-slate-400 text-sm">Browse your history anytime</p>
               </div>
             </div>
           </div>
@@ -189,7 +189,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-10 py-5 rounded-lg font-semibold text-xl shadow-lg shadow-blue-500/50 hover:shadow-blue-500/70 transition-all inline-flex items-center space-x-3"
             >
               <Sparkles className="w-6 h-6" />
-              <span>Start Creating Videos Now</span>
+              <span>Animate Your First Image</span>
             </button>
           </div>
         </div>
