@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GenerationConfig } from "../types";
+import { GenerationConfig, GenerationMode } from "../types";
 
 export class VeoService {
   private ai: GoogleGenerativeAI | null = null;
@@ -14,30 +14,80 @@ export class VeoService {
 
   public async generateVideo(config: GenerationConfig): Promise<string> {
     const ai = this.getClient();
-    const { prompt, imageBase64, mimeType, aspectRatio } = config;
+    const {
+      mode,
+      prompt,
+      negativePrompt,
+      aspectRatio,
+      resolution,
+      numberOfVideos,
+      image,
+      referenceImages,
+      videoBase64,
+      videoMimeType,
+      cameraMotion,
+      cinematicStyle
+    } = config;
 
-    console.log("Starting Video Generation...", { aspectRatio, promptLength: prompt.length });
+    console.log("Starting Video Generation...", {
+      mode,
+      aspectRatio,
+      resolution,
+      promptLength: prompt.length,
+      hasReferenceImages: !!referenceImages?.length,
+      hasNegativePrompt: !!negativePrompt
+    });
 
     try {
-      // 1. Initiate Generation
-      let operation = await ai.models.generateVideos({
+      let fullPrompt = prompt;
+
+      if (cameraMotion) {
+        fullPrompt += ` Camera motion: ${cameraMotion}.`;
+      }
+
+      if (cinematicStyle) {
+        fullPrompt += ` Cinematic style: ${cinematicStyle}.`;
+      }
+
+      if (negativePrompt) {
+        fullPrompt += ` Avoid: ${negativePrompt}.`;
+      }
+
+      const requestParams: any = {
         model: 'veo-3.1-fast-generate-preview',
-        prompt: prompt,
-        image: {
-          imageBytes: imageBase64,
-          mimeType: mimeType,
-        },
+        prompt: fullPrompt,
         config: {
-          numberOfVideos: 1,
-          resolution: '720p',
-          aspectRatio: aspectRatio as any, // Cast if SDK type strictness varies
+          numberOfVideos: numberOfVideos,
+          resolution: resolution,
+          aspectRatio: aspectRatio as any,
         }
-      });
+      };
+
+      if (mode === GenerationMode.IMAGE_TO_VIDEO && image) {
+        requestParams.image = {
+          imageBytes: image.imageBytes,
+          mimeType: image.mimeType,
+        };
+      }
+
+      if (referenceImages && referenceImages.length > 0) {
+        requestParams.referenceImages = referenceImages.map(ref => ({
+          imageBytes: ref.imageBytes,
+          mimeType: ref.mimeType,
+        }));
+      }
+
+      if (mode === GenerationMode.VIDEO_EXTENSION && videoBase64 && videoMimeType) {
+        requestParams.video = {
+          videoBytes: videoBase64,
+          mimeType: videoMimeType,
+        };
+      }
+
+      let operation = await ai.models.generateVideos(requestParams);
 
       console.log("Operation initiated. ID:", operation.name);
 
-      // 2. Poll for Completion
-      // The prompt suggests waiting 5 seconds between checks
       while (!operation.done) {
         console.log("Polling for status...");
         await new Promise(resolve => setTimeout(resolve, 5000));
@@ -52,8 +102,6 @@ export class VeoService {
         throw new Error("No video URI returned in the response.");
       }
 
-      // 3. Fetch Authenticated Video
-      // We must append the API key to the download link manually
       const apiKey = localStorage.getItem('VITE_API_KEY') || import.meta.env.VITE_API_KEY;
       const authenticatedUrl = `${videoUri}&key=${apiKey}`;
 
@@ -64,12 +112,11 @@ export class VeoService {
 
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
-      
+
       return objectUrl;
 
     } catch (error: any) {
       console.error("Veo Service Error:", error);
-      // Basic error re-mapping for better UI messages
       if (error.message?.includes("Requested entity was not found")) {
          throw new Error("API Key invalid or session expired. Please select your API Key again.");
       }

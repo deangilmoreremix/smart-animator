@@ -3,11 +3,47 @@ export enum AspectRatio {
   PORTRAIT = '9:16'
 }
 
-export interface GenerationConfig {
-  prompt: string;
-  imageBase64: string; // Pure base64 without data prefix
+export enum Resolution {
+  HD = '720p',
+  FULL_HD = '1080p'
+}
+
+export enum GenerationMode {
+  TEXT_TO_VIDEO = 'text-to-video',
+  IMAGE_TO_VIDEO = 'image-to-video',
+  VIDEO_EXTENSION = 'video-extension'
+}
+
+export interface ImageInput {
+  imageBytes: string;
   mimeType: string;
+}
+
+export interface ReferenceImage extends ImageInput {
+  id: string;
+}
+
+export interface GenerationConfig {
+  mode: GenerationMode;
+  prompt: string;
+  negativePrompt?: string;
   aspectRatio: AspectRatio;
+  resolution: Resolution;
+  numberOfVideos: number;
+
+  // Image-to-video specific
+  image?: ImageInput;
+
+  // Reference images for style consistency
+  referenceImages?: ReferenceImage[];
+
+  // Video extension specific
+  videoBase64?: string;
+  videoMimeType?: string;
+
+  // Advanced controls
+  cameraMotion?: string;
+  cinematicStyle?: string;
 }
 
 export interface AIStudio {
@@ -20,7 +56,7 @@ declare global {
   interface Window {
     aistudio: AIStudio;
   }
-  
+
   // Removed process declaration to fix "Cannot redeclare block-scoped variable 'process'" error.
   // We assume process is available in the environment.
 }
