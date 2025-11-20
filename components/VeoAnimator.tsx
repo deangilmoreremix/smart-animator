@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { AspectRatio, Resolution, GenerationMode, ReferenceImage, VideoDuration, VeoModel, ReferenceImageType } from '../types';
 import { veoService } from '../services/veoService';
+import { databaseService } from '../services/supabase';
 import Button from './Button';
 import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2 } from './Icons';
 
@@ -30,6 +31,7 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [savedMessage, setSavedMessage] = useState<string | null>(null);
 
   const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -138,7 +140,34 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
     setVideoUrl(null);
     startTimer();
 
+    const userId = 'demo-user';
+    let generationId: string | null = null;
+
     try {
+      const generationData = {
+        user_id: userId,
+        title: `Animation ${new Date().toLocaleString()}`,
+        prompt,
+        negative_prompt: negativePrompt || undefined,
+        mode,
+        model,
+        aspect_ratio: aspectRatio,
+        resolution,
+        duration: parseInt(duration),
+        camera_motion: cameraMotion || undefined,
+        cinematic_style: cinematicStyle || undefined,
+        seed: seed ? parseInt(seed) : undefined,
+        enable_person_generation: enablePersonGeneration,
+        input_image_url: imagePreview || undefined,
+        reference_images: referenceImages.length > 0 ? referenceImages : undefined,
+        status: 'processing' as const
+      };
+
+      const savedGeneration = await databaseService.createVideoGeneration(generationData);
+      if (savedGeneration?.id) {
+        generationId = savedGeneration.id;
+      }
+
       const config: any = {
         mode,
         prompt,
@@ -171,9 +200,26 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
 
       const url = await veoService.generateVideo(config);
       setVideoUrl(url);
+
+      if (generationId) {
+        await databaseService.updateVideoGeneration(generationId, {
+          status: 'completed',
+          video_url: url,
+          completed_at: new Date().toISOString()
+        });
+        setSavedMessage('Video saved to your history!');
+        setTimeout(() => setSavedMessage(null), 5000);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to generate video.");
+
+      if (generationId) {
+        await databaseService.updateVideoGeneration(generationId, {
+          status: 'failed',
+          error_message: err.message || "Failed to generate video"
+        });
+      }
     } finally {
       setIsGenerating(false);
       stopTimer();
@@ -556,6 +602,13 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
           <div className="bg-red-900/20 border border-red-800 text-red-200 px-4 py-3 rounded-lg mb-6 text-sm flex items-center">
              <XCircle className="w-4 h-4 mr-2 shrink-0" />
              {error}
+          </div>
+        )}
+
+        {savedMessage && (
+          <div className="bg-green-900/20 border border-green-800 text-green-200 px-4 py-3 rounded-lg mb-6 text-sm flex items-center">
+             <Video className="w-4 h-4 mr-2 shrink-0" />
+             {savedMessage}
           </div>
         )}
 
