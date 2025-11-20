@@ -348,44 +348,64 @@ const VeoAnimator: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-2">Aspect Ratio</label>
-            <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
-              <button
-                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.PORTRAIT ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                onClick={() => setAspectRatio(AspectRatio.PORTRAIT)}
-                disabled={isGenerating}
-              >
-                9:16
-              </button>
-              <button
-                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.LANDSCAPE ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                onClick={() => setAspectRatio(AspectRatio.LANDSCAPE)}
-                disabled={isGenerating}
-              >
-                16:9
-              </button>
-            </div>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-400 mb-2">Aspect Ratio</label>
+          <div className="grid grid-cols-5 gap-2 bg-slate-950 p-1 rounded-lg border border-slate-700">
+            <button
+              className={`py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.PORTRAIT ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setAspectRatio(AspectRatio.PORTRAIT)}
+              disabled={isGenerating}
+            >
+              9:16
+            </button>
+            <button
+              className={`py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.SQUARE ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setAspectRatio(AspectRatio.SQUARE)}
+              disabled={isGenerating}
+            >
+              1:1
+            </button>
+            <button
+              className={`py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.LANDSCAPE ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setAspectRatio(AspectRatio.LANDSCAPE)}
+              disabled={isGenerating}
+            >
+              16:9
+            </button>
+            <button
+              className={`py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.ULTRAWIDE ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setAspectRatio(AspectRatio.ULTRAWIDE)}
+              disabled={isGenerating}
+            >
+              21:9
+            </button>
+            <button
+              className={`py-2 px-2 rounded-md text-xs font-medium transition-all ${aspectRatio === AspectRatio.CINEMA ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setAspectRatio(AspectRatio.CINEMA)}
+              disabled={isGenerating}
+            >
+              Cinema
+            </button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-2">Resolution</label>
-            <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
-              <button
-                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                onClick={() => setResolution(Resolution.HD)}
-                disabled={isGenerating}
-              >
-                720p
-              </button>
-              <button
-                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.FULL_HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-                onClick={() => setResolution(Resolution.FULL_HD)}
-                disabled={isGenerating}
-              >
-                1080p
-              </button>
-            </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-400 mb-2">Resolution</label>
+          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
+            <button
+              className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setResolution(Resolution.HD)}
+              disabled={isGenerating}
+            >
+              720p
+            </button>
+            <button
+              className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.FULL_HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              onClick={() => setResolution(Resolution.FULL_HD)}
+              disabled={isGenerating}
+            >
+              1080p
+            </button>
           </div>
         </div>
 
