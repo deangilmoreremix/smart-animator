@@ -17,6 +17,26 @@ export enum GenerationMode {
   VIDEO_EXTENSION = 'video-extension'
 }
 
+export enum VideoDuration {
+  SHORT = 4,
+  MEDIUM = 6,
+  LONG = 8
+}
+
+export enum VeoModel {
+  VEO_3_1_PREVIEW = 'veo-3.1-generate-preview',
+  VEO_3_1_FAST = 'veo-3.1-fast-generate-preview',
+  VEO_3_PREVIEW = 'veo-3-generate-preview',
+  VEO_3_FAST = 'veo-3-fast-generate-preview',
+  VEO_2 = 'veo-002'
+}
+
+export enum ReferenceImageType {
+  ASSET = 'asset',
+  STYLE = 'style',
+  CONTENT = 'content'
+}
+
 export interface ImageInput {
   imageBytes: string;
   mimeType: string;
@@ -24,6 +44,7 @@ export interface ImageInput {
 
 export interface ReferenceImage extends ImageInput {
   id: string;
+  type?: ReferenceImageType;
 }
 
 export interface GenerationConfig {
@@ -32,6 +53,8 @@ export interface GenerationConfig {
   negativePrompt?: string;
   aspectRatio: AspectRatio;
   resolution: Resolution;
+  duration: VideoDuration;
+  model: VeoModel;
   numberOfVideos: number;
 
   // Image-to-video specific
@@ -47,6 +70,8 @@ export interface GenerationConfig {
   // Advanced controls
   cameraMotion?: string;
   cinematicStyle?: string;
+  seed?: number;
+  enablePersonGeneration?: boolean;
 }
 
 export interface AIStudio {

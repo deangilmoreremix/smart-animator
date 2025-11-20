@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { AspectRatio, Resolution, GenerationMode, ReferenceImage } from '../types';
+import { AspectRatio, Resolution, GenerationMode, ReferenceImage, VideoDuration, VeoModel, ReferenceImageType } from '../types';
 import { veoService } from '../services/veoService';
 import Button from './Button';
 import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2 } from './Icons';
@@ -15,6 +15,10 @@ const VeoAnimator: React.FC = () => {
   const [negativePrompt, setNegativePrompt] = useState<string>("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.PORTRAIT);
   const [resolution, setResolution] = useState<Resolution>(Resolution.HD);
+  const [duration, setDuration] = useState<VideoDuration>(VideoDuration.LONG);
+  const [model, setModel] = useState<VeoModel>(VeoModel.VEO_3_1_FAST);
+  const [seed, setSeed] = useState<string>("");
+  const [enablePersonGeneration, setEnablePersonGeneration] = useState<boolean>(false);
   const [cameraMotion, setCameraMotion] = useState<string>("");
   const [cinematicStyle, setCinematicStyle] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -69,12 +73,19 @@ const VeoAnimator: React.FC = () => {
         const newRef: ReferenceImage = {
           id: Date.now().toString(),
           imageBytes: base64Data,
-          mimeType: file.type
+          mimeType: file.type,
+          type: ReferenceImageType.ASSET
         };
         setReferenceImages([...referenceImages, newRef]);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const updateReferenceImageType = (id: string, type: ReferenceImageType) => {
+    setReferenceImages(referenceImages.map(img =>
+      img.id === id ? { ...img, type } : img
+    ));
   };
 
   const removeReferenceImage = (id: string) => {
@@ -128,10 +139,14 @@ const VeoAnimator: React.FC = () => {
         negativePrompt: negativePrompt || undefined,
         aspectRatio,
         resolution,
+        duration,
+        model,
         numberOfVideos: 1,
         cameraMotion: cameraMotion || undefined,
         cinematicStyle: cinematicStyle || undefined,
-        referenceImages: referenceImages.length > 0 ? referenceImages : undefined
+        referenceImages: referenceImages.length > 0 ? referenceImages : undefined,
+        seed: seed ? parseInt(seed) : undefined,
+        enablePersonGeneration
       };
 
       if (mode === GenerationMode.IMAGE_TO_VIDEO && imagePreview) {
@@ -323,6 +338,22 @@ const VeoAnimator: React.FC = () => {
           />
         </div>
 
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-400 mb-2">Model</label>
+          <select
+            value={model}
+            onChange={(e) => setModel(e.target.value as VeoModel)}
+            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none"
+            disabled={isGenerating}
+          >
+            <option value={VeoModel.VEO_3_1_FAST}>Veo 3.1 Fast (Recommended)</option>
+            <option value={VeoModel.VEO_3_1_PREVIEW}>Veo 3.1 Preview</option>
+            <option value={VeoModel.VEO_3_FAST}>Veo 3 Fast</option>
+            <option value={VeoModel.VEO_3_PREVIEW}>Veo 3 Preview</option>
+            <option value={VeoModel.VEO_2}>Veo 2</option>
+          </select>
+        </div>
+
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
             <label className="block text-sm font-medium text-slate-400 mb-2">Camera Motion</label>
@@ -345,6 +376,32 @@ const VeoAnimator: React.FC = () => {
               placeholder="e.g., noir, vintage"
               disabled={isGenerating}
             />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-400 mb-2">Seed (Optional)</label>
+            <input
+              type="number"
+              value={seed}
+              onChange={(e) => setSeed(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Random"
+              disabled={isGenerating}
+            />
+          </div>
+          <div className="flex items-end">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enablePersonGeneration}
+                onChange={(e) => setEnablePersonGeneration(e.target.checked)}
+                className="w-4 h-4 bg-slate-950 border-slate-700 rounded focus:ring-2 focus:ring-blue-500"
+                disabled={isGenerating}
+              />
+              <span className="text-sm text-slate-400">Allow People</span>
+            </label>
           </div>
         </div>
 
@@ -389,23 +446,51 @@ const VeoAnimator: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-400 mb-2">Resolution</label>
-          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
-            <button
-              className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-              onClick={() => setResolution(Resolution.HD)}
-              disabled={isGenerating}
-            >
-              720p
-            </button>
-            <button
-              className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.FULL_HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-              onClick={() => setResolution(Resolution.FULL_HD)}
-              disabled={isGenerating}
-            >
-              1080p
-            </button>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-400 mb-2">Resolution</label>
+            <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
+              <button
+                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                onClick={() => setResolution(Resolution.HD)}
+                disabled={isGenerating}
+              >
+                720p
+              </button>
+              <button
+                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${resolution === Resolution.FULL_HD ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                onClick={() => setResolution(Resolution.FULL_HD)}
+                disabled={isGenerating}
+              >
+                1080p
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-400 mb-2">Duration</label>
+            <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-700">
+              <button
+                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${duration === VideoDuration.SHORT ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                onClick={() => setDuration(VideoDuration.SHORT)}
+                disabled={isGenerating}
+              >
+                4s
+              </button>
+              <button
+                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${duration === VideoDuration.MEDIUM ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                onClick={() => setDuration(VideoDuration.MEDIUM)}
+                disabled={isGenerating}
+              >
+                6s
+              </button>
+              <button
+                className={`flex-1 py-2 px-2 rounded-md text-xs font-medium transition-all ${duration === VideoDuration.LONG ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                onClick={() => setDuration(VideoDuration.LONG)}
+                disabled={isGenerating}
+              >
+                8s
+              </button>
+            </div>
           </div>
         </div>
 
@@ -413,21 +498,33 @@ const VeoAnimator: React.FC = () => {
           <label className="block text-sm font-medium text-slate-400 mb-2">
             Reference Images (Up to 3)
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             {referenceImages.map((ref) => (
-              <div key={ref.id} className="relative rounded-lg overflow-hidden border border-slate-700 aspect-square group">
-                <img
-                  src={`data:${ref.mimeType};base64,${ref.imageBytes}`}
-                  alt="Reference"
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  onClick={() => removeReferenceImage(ref.id)}
-                  className="absolute top-1 right-1 bg-slate-900/80 hover:bg-red-900/90 text-white p-1 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+              <div key={ref.id} className="space-y-2">
+                <div className="relative rounded-lg overflow-hidden border border-slate-700 aspect-square group">
+                  <img
+                    src={`data:${ref.mimeType};base64,${ref.imageBytes}`}
+                    alt="Reference"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    onClick={() => removeReferenceImage(ref.id)}
+                    className="absolute top-1 right-1 bg-slate-900/80 hover:bg-red-900/90 text-white p-1 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                    disabled={isGenerating}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <select
+                  value={ref.type || ReferenceImageType.ASSET}
+                  onChange={(e) => updateReferenceImageType(ref.id, e.target.value as ReferenceImageType)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded p-1 text-xs text-slate-300"
                   disabled={isGenerating}
                 >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                  <option value={ReferenceImageType.ASSET}>Asset</option>
+                  <option value={ReferenceImageType.STYLE}>Style</option>
+                  <option value={ReferenceImageType.CONTENT}>Content</option>
+                </select>
               </div>
             ))}
             {referenceImages.length < 3 && (

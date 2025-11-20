@@ -20,22 +20,29 @@ export class VeoService {
       negativePrompt,
       aspectRatio,
       resolution,
+      duration,
+      model,
       numberOfVideos,
       image,
       referenceImages,
       videoBase64,
       videoMimeType,
       cameraMotion,
-      cinematicStyle
+      cinematicStyle,
+      seed,
+      enablePersonGeneration
     } = config;
 
     console.log("Starting Video Generation...", {
       mode,
+      model,
       aspectRatio,
       resolution,
+      duration,
       promptLength: prompt.length,
       hasReferenceImages: !!referenceImages?.length,
-      hasNegativePrompt: !!negativePrompt
+      hasNegativePrompt: !!negativePrompt,
+      seed: seed || 'random'
     });
 
     try {
@@ -54,14 +61,23 @@ export class VeoService {
       }
 
       const requestParams: any = {
-        model: 'veo-3.1-fast-generate-preview',
+        model: model,
         prompt: fullPrompt,
         config: {
           numberOfVideos: numberOfVideos,
           resolution: resolution,
           aspectRatio: aspectRatio as any,
+          videoDuration: `${duration}s`,
         }
       };
+
+      if (seed !== undefined) {
+        requestParams.config.seed = seed;
+      }
+
+      if (enablePersonGeneration !== undefined) {
+        requestParams.config.personGeneration = enablePersonGeneration ? 'allow_adult' : 'dont_allow';
+      }
 
       if (mode === GenerationMode.IMAGE_TO_VIDEO && image) {
         requestParams.image = {
@@ -71,10 +87,16 @@ export class VeoService {
       }
 
       if (referenceImages && referenceImages.length > 0) {
-        requestParams.referenceImages = referenceImages.map(ref => ({
-          imageBytes: ref.imageBytes,
-          mimeType: ref.mimeType,
-        }));
+        requestParams.referenceImages = referenceImages.map(ref => {
+          const refImg: any = {
+            imageBytes: ref.imageBytes,
+            mimeType: ref.mimeType,
+          };
+          if (ref.type) {
+            refImg.referenceType = ref.type;
+          }
+          return refImg;
+        });
       }
 
       if (mode === GenerationMode.VIDEO_EXTENSION && videoBase64 && videoMimeType) {
