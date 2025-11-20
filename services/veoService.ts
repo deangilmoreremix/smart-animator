@@ -1,16 +1,15 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GenerationConfig } from "../types";
 
 export class VeoService {
-  private ai: GoogleGenAI | null = null;
+  private ai: GoogleGenerativeAI | null = null;
 
-  private getClient(): GoogleGenAI {
-    // Always create a new instance to ensure we have the latest key if it changed
+  private getClient(): GoogleGenerativeAI {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
       throw new Error("API Key not found. Please select an API Key first.");
     }
-    return new GoogleGenAI({ apiKey });
+    return new GoogleGenerativeAI(apiKey);
   }
 
   public async generateVideo(config: GenerationConfig): Promise<string> {
