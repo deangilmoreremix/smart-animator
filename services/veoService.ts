@@ -5,9 +5,9 @@ export class VeoService {
   private ai: GoogleGenerativeAI | null = null;
 
   private getClient(): GoogleGenerativeAI {
-    let apiKey = localStorage.getItem('VITE_API_KEY') || import.meta.env.VITE_API_KEY;
-    if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-      throw new Error("API Key not found. Please enter your API Key first.");
+    const apiKey = import.meta.env.VITE_API_KEY;
+    if (!apiKey) {
+      throw new Error("API Key not found. Please select an API Key first.");
     }
     return new GoogleGenerativeAI(apiKey);
   }
@@ -54,9 +54,8 @@ export class VeoService {
 
       // 3. Fetch Authenticated Video
       // We must append the API key to the download link manually
-      const apiKey = localStorage.getItem('VITE_API_KEY') || import.meta.env.VITE_API_KEY;
-      const authenticatedUrl = `${videoUri}&key=${apiKey}`;
-
+      const authenticatedUrl = `${videoUri}&key=${import.meta.env.VITE_API_KEY}`;
+      
       const response = await fetch(authenticatedUrl);
       if (!response.ok) {
         throw new Error(`Failed to download video: ${response.statusText}`);
