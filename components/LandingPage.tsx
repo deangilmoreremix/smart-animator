@@ -62,11 +62,69 @@ const UseCaseCard: React.FC<UseCaseCardProps> = ({ icon, title, description, exa
   </div>
 );
 
-interface LandingPageProps {
-  onGetStarted: () => void;
+interface DemoCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  prompt: string;
+  category: string;
+  onClick: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
+const DemoCard: React.FC<DemoCardProps> = ({ icon, title, description, prompt, category, onClick }) => (
+  <button
+    onClick={onClick}
+    className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden group hover:border-blue-500/50 transition-all text-left w-full"
+  >
+    <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden group-hover:from-slate-700 group-hover:to-slate-800 transition-all">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:bg-blue-500/30 transition-all">
+            {icon}
+          </div>
+          <p className="text-slate-400 text-sm">{category}</p>
+        </div>
+      </div>
+      <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-sm px-3 py-1 rounded-full">
+        <span className="text-blue-400 text-xs font-semibold">BEFORE</span>
+      </div>
+      <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-500">
+        <span className="text-blue-400 text-xs font-semibold">AFTER</span>
+      </div>
+      <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+        <div className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold text-sm flex items-center space-x-2">
+          <Sparkles className="w-4 h-4" />
+          <span>Try This Example</span>
+        </div>
+      </div>
+    </div>
+    <div className="p-6">
+      <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">{title}</h3>
+      <p className="text-slate-400 text-sm mb-3">
+        {description}
+      </p>
+      <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-3 group-hover:border-blue-500/30 transition-all">
+        <p className="text-slate-300 text-xs italic">
+          "{prompt}"
+        </p>
+      </div>
+    </div>
+  </button>
+);
+
+interface LandingPageProps {
+  onGetStarted: () => void;
+  onDemoClick?: (prompt: string) => void;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) => {
+  const handleDemoClick = (prompt: string) => {
+    if (onDemoClick) {
+      onDemoClick(prompt);
+    } else {
+      onGetStarted();
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
 
@@ -111,12 +169,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   See the transformation happen in real-time
                 </p>
               </div>
-              <div className="bg-slate-950/50 border border-slate-800 rounded-xl overflow-hidden">
+              <button
+                onClick={() => handleDemoClick("Camera slowly zooms in while subject turns head slightly, soft lighting creates depth, natural breathing motion")}
+                className="w-full bg-slate-950/50 border border-slate-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all group"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2">
-                  <div className="relative aspect-square bg-gradient-to-br from-slate-800 to-slate-900">
+                  <div className="relative aspect-square bg-gradient-to-br from-slate-800 to-slate-900 group-hover:from-slate-700 group-hover:to-slate-800 transition-all">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
-                        <Film className="w-16 h-16 text-slate-600 mx-auto mb-3" />
+                        <Film className="w-16 h-16 text-slate-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
                         <p className="text-slate-500 text-sm font-medium">Static Image</p>
                       </div>
                     </div>
@@ -124,11 +185,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                       <p className="text-slate-400 text-xs">Original photo uploaded</p>
                     </div>
                   </div>
-                  <div className="relative aspect-square bg-gradient-to-br from-blue-900/20 to-blue-950/20">
+                  <div className="relative aspect-square bg-gradient-to-br from-blue-900/20 to-blue-950/20 group-hover:from-blue-900/30 group-hover:to-blue-950/30 transition-all">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
                         <div className="relative">
-                          <Video className="w-16 h-16 text-blue-400 mx-auto mb-3" />
+                          <Video className="w-16 h-16 text-blue-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
                           <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                         </div>
                         <p className="text-blue-400 text-sm font-medium">Animated Video</p>
@@ -137,9 +198,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 to-transparent p-4">
                       <p className="text-slate-300 text-xs font-medium">AI-generated animation with motion</p>
                     </div>
+                    <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <div className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold text-sm flex items-center space-x-2">
+                        <Sparkles className="w-4 h-4" />
+                        <span>Try This Example</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="bg-slate-900/50 p-6 border-t border-slate-800">
+                <div className="bg-slate-900/50 p-6 border-t border-slate-800 text-left group-hover:bg-slate-900/70 transition-all">
                   <div className="flex items-start space-x-3">
                     <Sparkles className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                     <div>
@@ -150,7 +217,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -233,125 +300,38 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               Watch how static images transform into dynamic animations with just a simple prompt
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden group">
-                <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mx-auto mb-4">
-                        <Film className="w-10 h-10 text-blue-400" />
-                      </div>
-                      <p className="text-slate-400 text-sm">Product Animation Demo</p>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-blue-400 text-xs font-semibold">BEFORE</span>
-                  </div>
-                  <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-500">
-                    <span className="text-blue-400 text-xs font-semibold">AFTER</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Product Showcase</h3>
-                  <p className="text-slate-400 text-sm mb-3">
-                    Transform a simple product photo into a dynamic 360° rotating showcase
-                  </p>
-                  <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-3">
-                    <p className="text-slate-300 text-xs italic">
-                      "Slowly rotate the product 360 degrees, camera orbits smoothly, soft studio lighting"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden group">
-                <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mx-auto mb-4">
-                        <Video className="w-10 h-10 text-blue-400" />
-                      </div>
-                      <p className="text-slate-400 text-sm">Portrait Animation Demo</p>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-blue-400 text-xs font-semibold">BEFORE</span>
-                  </div>
-                  <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-500">
-                    <span className="text-blue-400 text-xs font-semibold">AFTER</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Cinematic Portrait</h3>
-                  <p className="text-slate-400 text-sm mb-3">
-                    Add natural breathing and subtle movements to bring portraits to life
-                  </p>
-                  <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-3">
-                    <p className="text-slate-300 text-xs italic">
-                      "Gentle breathing motion, hair moves slightly in the breeze, slow zoom in on eyes"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden group">
-                <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mx-auto mb-4">
-                        <Sparkles className="w-10 h-10 text-blue-400" />
-                      </div>
-                      <p className="text-slate-400 text-sm">Landscape Animation Demo</p>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-blue-400 text-xs font-semibold">BEFORE</span>
-                  </div>
-                  <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-500">
-                    <span className="text-blue-400 text-xs font-semibold">AFTER</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Living Landscape</h3>
-                  <p className="text-slate-400 text-sm mb-3">
-                    Make static landscapes come alive with moving clouds, swaying trees, and flowing water
-                  </p>
-                  <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-3">
-                    <p className="text-slate-300 text-xs italic">
-                      "Clouds drift across sky, trees sway gently, camera pans slowly across scene"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden group">
-                <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center mx-auto mb-4">
-                        <Layers className="w-10 h-10 text-blue-400" />
-                      </div>
-                      <p className="text-slate-400 text-sm">Social Media Demo</p>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-blue-400 text-xs font-semibold">BEFORE</span>
-                  </div>
-                  <div className="absolute top-4 right-4 bg-blue-500/20 backdrop-blur-sm px-3 py-1 rounded-full border border-blue-500">
-                    <span className="text-blue-400 text-xs font-semibold">AFTER</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Social Content</h3>
-                  <p className="text-slate-400 text-sm mb-3">
-                    Create eye-catching content optimized for Instagram, TikTok, and other platforms
-                  </p>
-                  <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-3">
-                    <p className="text-slate-300 text-xs italic">
-                      "Dramatic zoom in, background blur increases, energetic camera movement"
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <DemoCard
+                icon={<Film className="w-10 h-10 text-blue-400" />}
+                category="Product Animation Demo"
+                title="Product Showcase"
+                description="Transform a simple product photo into a dynamic 360° rotating showcase"
+                prompt="Slowly rotate the product 360 degrees, camera orbits smoothly, soft studio lighting"
+                onClick={() => handleDemoClick("Slowly rotate the product 360 degrees, camera orbits smoothly, soft studio lighting")}
+              />
+              <DemoCard
+                icon={<Video className="w-10 h-10 text-blue-400" />}
+                category="Portrait Animation Demo"
+                title="Cinematic Portrait"
+                description="Add natural breathing and subtle movements to bring portraits to life"
+                prompt="Gentle breathing motion, hair moves slightly in the breeze, slow zoom in on eyes"
+                onClick={() => handleDemoClick("Gentle breathing motion, hair moves slightly in the breeze, slow zoom in on eyes")}
+              />
+              <DemoCard
+                icon={<Sparkles className="w-10 h-10 text-blue-400" />}
+                category="Landscape Animation Demo"
+                title="Living Landscape"
+                description="Make static landscapes come alive with moving clouds, swaying trees, and flowing water"
+                prompt="Clouds drift across sky, trees sway gently, camera pans slowly across scene"
+                onClick={() => handleDemoClick("Clouds drift across sky, trees sway gently, camera pans slowly across scene")}
+              />
+              <DemoCard
+                icon={<Layers className="w-10 h-10 text-blue-400" />}
+                category="Social Media Demo"
+                title="Social Content"
+                description="Create eye-catching content optimized for Instagram, TikTok, and other platforms"
+                prompt="Dramatic zoom in, background blur increases, energetic camera movement"
+                onClick={() => handleDemoClick("Dramatic zoom in, background blur increases, energetic camera movement")}
+              />
             </div>
           </div>
 

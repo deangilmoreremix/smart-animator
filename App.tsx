@@ -8,17 +8,39 @@ type Page = 'landing' | 'animator' | 'history';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
+  const [demoPrompt, setDemoPrompt] = useState<string | null>(null);
+
+  const handleDemoClick = (prompt: string) => {
+    setDemoPrompt(prompt);
+    setCurrentPage('animator');
+  };
 
   const renderPage = () => {
     switch (currentPage) {
       case 'landing':
-        return <LandingPage onGetStarted={() => setCurrentPage('animator')} />;
+        return (
+          <LandingPage
+            onGetStarted={() => {
+              setDemoPrompt(null);
+              setCurrentPage('animator');
+            }}
+            onDemoClick={handleDemoClick}
+          />
+        );
       case 'animator':
-        return <VeoAnimator />;
+        return <VeoAnimator initialPrompt={demoPrompt} />;
       case 'history':
         return <History />;
       default:
-        return <LandingPage onGetStarted={() => setCurrentPage('animator')} />;
+        return (
+          <LandingPage
+            onGetStarted={() => {
+              setDemoPrompt(null);
+              setCurrentPage('animator');
+            }}
+            onDemoClick={handleDemoClick}
+          />
+        );
     }
   };
 

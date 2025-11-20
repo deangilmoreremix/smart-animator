@@ -4,14 +4,20 @@ import { veoService } from '../services/veoService';
 import Button from './Button';
 import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2 } from './Icons';
 
-const VeoAnimator: React.FC = () => {
+interface VeoAnimatorProps {
+  initialPrompt?: string | null;
+}
+
+const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   const [mode, setMode] = useState<GenerationMode>(GenerationMode.IMAGE_TO_VIDEO);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [referenceImages, setReferenceImages] = useState<ReferenceImage[]>([]);
-  const [prompt, setPrompt] = useState<string>("A close-up video of the character speaking and making natural facial expressions.");
+  const [prompt, setPrompt] = useState<string>(
+    initialPrompt || "A close-up video of the character speaking and making natural facial expressions."
+  );
   const [negativePrompt, setNegativePrompt] = useState<string>("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.PORTRAIT);
   const [resolution, setResolution] = useState<Resolution>(Resolution.HD);
