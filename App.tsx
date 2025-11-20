@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import VeoAnimator from './components/VeoAnimator';
+import ApiKeyModal from './components/ApiKeyModal';
 import { RefreshCw } from './components/Icons';
 
 const App: React.FC = () => {
+  const [hasApiKey, setHasApiKey] = useState(false);
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_API_KEY;
+    if (apiKey && apiKey !== 'your-gemini-api-key-here') {
+      setHasApiKey(true);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen w-full bg-slate-950 relative overflow-x-hidden">
       {/* Background Gradients */}
@@ -30,6 +40,7 @@ const App: React.FC = () => {
       </header>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {!hasApiKey && <ApiKeyModal onKeySelected={() => setHasApiKey(true)} />}
         <VeoAnimator />
       </main>
 
