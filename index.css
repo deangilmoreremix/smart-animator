@@ -1,26 +1,28 @@
-@import "tailwindcss/theme" layer(theme);
-@import "tailwindcss/preflight" layer(base);
-@import "tailwindcss/utilities" layer(utilities);
+@import "tailwindcss";
 
-@layer base {
-  body {
-    font-family: 'Inter', sans-serif;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
 
-  ::-webkit-scrollbar-track {
-    background: #0f172a;
-  }
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 4px;
-  }
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #475569;
-  }
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
