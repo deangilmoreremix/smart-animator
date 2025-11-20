@@ -1,93 +1,98 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from './Button';
-import { Key } from './Icons';
+import { Key, XCircle } from './Icons';
 
 interface ApiKeyModalProps {
   onKeySelected: () => void;
 }
 
 const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onKeySelected }) => {
-  const [hasKey, setHasKey] = useState(false);
-  const [checking, setChecking] = useState(true);
+  const [apiKey, setApiKey] = useState('');
+  const [error, setError] = useState('');
 
-  const checkKey = async () => {
-    if (window.aistudio && window.aistudio.hasSelectedApiKey) {
-      const has = await window.aistudio.hasSelectedApiKey();
-      setHasKey(has);
-      if (has) {
-        onKeySelected();
-      }
-    } else {
-        // Fallback if not running in expected environment, assuming true for dev/testing if env var present
-        // In real scenario, this block should ideally not be reached if strict prompt constraints are met
-        if(import.meta.env.VITE_API_KEY) {
-             setHasKey(true);
-             onKeySelected();
-        }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!apiKey.trim()) {
+      setError('Please enter your API key');
+      return;
     }
-    setChecking(false);
-  };
 
-  useEffect(() => {
-    checkKey();
-    // Optional: Poll briefly in case of async init of window.aistudio
-    const interval = setInterval(checkKey, 2000);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleSelectKey = async () => {
-    try {
-      if (window.aistudio && window.aistudio.openSelectKey) {
-        await window.aistudio.openSelectKey();
-        // Re-check immediately after selection flow closes (or wait for polling)
-        setChecking(true);
-        setTimeout(checkKey, 500);
-      } else {
-        alert("AI Studio environment not detected.");
-      }
-    } catch (error) {
-      console.error("Error selecting key:", error);
-      alert("Failed to open key selector.");
+    if (!apiKey.startsWith('AIza')) {
+      setError('Invalid API key format. Google API keys typically start with "AIza"');
+      return;
     }
+
+    localStorage.setItem('VITE_API_KEY', apiKey);
+    onKeySelected();
   };
-
-  if (checking && !hasKey) {
-    return null; // Or a loading spinner
-  }
-
-  if (hasKey) {
-    return null;
-  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-md w-full p-8">
         <div className="mx-auto bg-blue-900/30 w-16 h-16 rounded-full flex items-center justify-center mb-6">
           <Key className="w-8 h-8 text-blue-400" />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">API Key Required</h2>
-        <p className="text-slate-400 mb-8">
-          To use Veo Animator, you need to select a Google Cloud API Key. This key is used to communicate with the Gemini API.
+        <h2 className="text-2xl font-bold text-white mb-2 text-center">API Key Required</h2>
+        <p className="text-slate-400 mb-6 text-center">
+          Enter your Google Gemini API key to start generating videos with Veo 3.1
         </p>
-        
-        <Button 
-          onClick={handleSelectKey} 
-          className="w-full py-3 text-lg"
-          icon={<Key className="w-5 h-5"/>}
-        >
-          Select API Key
-        </Button>
-        
-        <div className="mt-6 text-xs text-slate-500">
-          <a 
-            href="https://ai.google.dev/gemini-api/docs/billing" 
-            target="_blank" 
-            rel="noreferrer"
-            className="underline hover:text-slate-300 transition-colors"
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="apiKey" className="block text-sm font-medium text-slate-400 mb-2">
+              Gemini API Key
+            </label>
+            <input
+              id="apiKey"
+              type="password"
+              value={apiKey}
+              onChange={(e) => {
+                setApiKey(e.target.value);
+                setError('');
+              }}
+              placeholder="AIza..."
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+          </div>
+
+          {error && (
+            <div className="bg-red-900/20 border border-red-800 text-red-200 px-3 py-2 rounded-lg text-sm flex items-center">
+              <XCircle className="w-4 h-4 mr-2 shrink-0" />
+              {error}
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full py-3 text-lg"
+            icon={<Key className="w-5 h-5"/>}
           >
-            Read about Gemini API Billing
-          </a>
+            Save API Key
+          </Button>
+        </form>
+
+        <div className="mt-6 text-xs text-slate-500 text-center space-y-2">
+          <p>
+            <a
+              href="https://aistudio.google.com/apikey"
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-slate-300 transition-colors"
+            >
+              Get your free API key
+            </a>
+          </p>
+          <p>
+            <a
+              href="https://ai.google.dev/gemini-api/docs/billing"
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-slate-300 transition-colors"
+            >
+              Read about pricing
+            </a>
+          </p>
         </div>
       </div>
     </div>
