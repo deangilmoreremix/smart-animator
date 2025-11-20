@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { databaseService, VideoGeneration } from '../services/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import { Video, Clock, Trash2, Download } from './Icons';
 
 const History: React.FC = () => {
+  const { user } = useAuth();
   const [generations, setGenerations] = useState<VideoGeneration[]>([]);
   const [loading, setLoading] = useState(true);
-  const userId = 'demo-user';
 
   useEffect(() => {
-    loadGenerations();
-  }, []);
+    if (user?.id) {
+      loadGenerations();
+    }
+  }, [user?.id]);
 
   const loadGenerations = async () => {
+    if (!user?.id) return;
     setLoading(true);
-    const data = await databaseService.getVideoGenerations(userId);
+    const data = await databaseService.getVideoGenerations(user.id);
     setGenerations(data);
     setLoading(false);
   };

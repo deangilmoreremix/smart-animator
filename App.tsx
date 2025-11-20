@@ -1,29 +1,65 @@
 import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import VeoAnimator from './components/VeoAnimator';
 import LandingPage from './components/LandingPage';
 import History from './components/History';
-import { RefreshCw, Film, Clock } from './components/Icons';
+import AuthPage from './components/AuthPage';
+import { RefreshCw, Film, Clock, LogOut, User } from './components/Icons';
 
 type Page = 'landing' | 'animator' | 'history';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { user, loading, signOut } = useAuth();
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [demoPrompt, setDemoPrompt] = useState<string | null>(null);
+  const [showAuthPage, setShowAuthPage] = useState(false);
 
   const handleDemoClick = (prompt: string) => {
+    if (!user) {
+      setShowAuthPage(true);
+      return;
+    }
     setDemoPrompt(prompt);
     setCurrentPage('animator');
   };
+
+  const handleGetStarted = () => {
+    if (!user) {
+      setShowAuthPage(true);
+      return;
+    }
+    setDemoPrompt(null);
+    setCurrentPage('animator');
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthPage(false);
+    setCurrentPage('animator');
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    setCurrentPage('landing');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (showAuthPage || (!user && currentPage !== 'landing')) {
+    return <AuthPage onAuthSuccess={handleAuthSuccess} />;
+  }
 
   const renderPage = () => {
     switch (currentPage) {
       case 'landing':
         return (
           <LandingPage
-            onGetStarted={() => {
-              setDemoPrompt(null);
-              setCurrentPage('animator');
-            }}
+            onGetStarted={handleGetStarted}
             onDemoClick={handleDemoClick}
           />
         );
@@ -34,10 +70,7 @@ const App: React.FC = () => {
       default:
         return (
           <LandingPage
-            onGetStarted={() => {
-              setDemoPrompt(null);
-              setCurrentPage('animator');
-            }}
+            onGetStarted={handleGetStarted}
             onDemoClick={handleDemoClick}
           />
         );
@@ -92,13 +125,22 @@ const App: React.FC = () => {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => window.location.reload()}
-              className="text-slate-400 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-800"
-              title="Reload App"
-            >
-              <RefreshCw className="w-5 h-5" />
-            </button>
+            {user && (
+              <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-2 text-slate-400 text-sm">
+                  <User className="w-4 h-4" />
+                  <span>{user.email}</span>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-slate-800"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="hidden md:inline text-sm">Sign Out</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -140,6 +182,14 @@ const App: React.FC = () => {
          </div>
       </footer>
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

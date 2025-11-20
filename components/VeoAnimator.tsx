@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { AspectRatio, Resolution, GenerationMode, ReferenceImage, VideoDuration, VeoModel, ReferenceImageType } from '../types';
 import { veoService } from '../services/veoService';
 import { databaseService } from '../services/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
 import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2 } from './Icons';
 
@@ -10,6 +11,7 @@ interface VeoAnimatorProps {
 }
 
 const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
+  const { user } = useAuth();
   const [mode, setMode] = useState<GenerationMode>(GenerationMode.IMAGE_TO_VIDEO);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -140,7 +142,7 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
     setVideoUrl(null);
     startTimer();
 
-    const userId = 'demo-user';
+    const userId = user?.id || 'demo-user';
     let generationId: string | null = null;
 
     try {
