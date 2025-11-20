@@ -1,0 +1,5 @@
+{
+  "name": "Veo Animator",
+  "description": "Animate your static images into videos using Google's Veo 3.1 model.",
+  "requestFramePermissions": []
+}
