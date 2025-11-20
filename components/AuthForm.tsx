@@ -82,7 +82,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess, onModeChange }) =>
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
-            <span className="font-bold text-white text-2xl">V</span>
+            <span className="font-bold text-white text-2xl">S</span>
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">
             {mode === 'signup' ? 'Create Account' : mode === 'reset' ? 'Reset Password' : 'Welcome Back'}

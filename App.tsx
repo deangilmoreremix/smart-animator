@@ -94,9 +94,9 @@ const AppContent: React.FC = () => {
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
-                 <span className="font-bold text-white text-lg">V</span>
+                 <span className="font-bold text-white text-lg">S</span>
               </div>
-              <h1 className="text-xl font-bold text-white tracking-tight">Veo Animator</h1>
+              <h1 className="text-xl font-bold text-white tracking-tight">Smart Animator</h1>
             </button>
 
             <nav className="hidden md:flex items-center space-x-1">
