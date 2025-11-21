@@ -1,5 +1,7 @@
 import React from 'react';
-import { Film, Video, Sparkles, Zap, Layers, Settings, Download, Clock, Shield } from './Icons';
+import { Film, Video, Sparkles, Zap, Layers, Download, CheckCircle, TrendingUp, Shield } from './Icons';
+import Testimonials from './Testimonials';
+import FAQ from './FAQ';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -41,89 +43,102 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
         <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
 
         <div className="relative max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center mb-20">
+          <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-full px-6 py-3 mb-8">
               <Sparkles className="w-5 h-5 text-cyan-400" />
               <span className="text-cyan-400 font-semibold text-sm">Powered by Google Veo 3.1 AI</span>
             </div>
 
-            <h1 className="text-7xl font-extrabold mb-6 leading-tight">
-              <span className="text-white">Transform Images into</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+              <span className="text-white">Stop Losing Engagement.</span>
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                Stunning Animations
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                Create Scroll-Stopping Videos
               </span>
+              <br />
+              <span className="text-white">in 60 Seconds</span>
             </h1>
 
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-              Turn any static image into a dynamic video with AI. No animation skills required.
-              Just upload, describe the motion, and watch magic happen in seconds.
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8 leading-relaxed">
+              Transform any static image into a dynamic video with AI. No design skills needed.
+              Simply describe the motion you want - our AI does the rest.
             </p>
+
+            <div className="flex flex-wrap gap-4 justify-center items-center mb-10">
+              <div className="flex items-center gap-2 text-slate-300">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <span className="text-sm">No credit card required</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-300">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <span className="text-sm">5 free videos to start</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-300">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <span className="text-sm">HD quality downloads</span>
+              </div>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
                 onClick={onGetStarted}
-                className="group bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-500 hover:via-purple-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 transition-all inline-flex items-center space-x-3"
+                className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 transition-all inline-flex items-center space-x-3"
               >
                 <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                <span>Start Creating Free</span>
-              </button>
-
-              <button
-                onClick={() => handleDemoClick("Camera slowly zooms in while subject turns head slightly, soft lighting creates depth")}
-                className="bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white px-8 py-5 rounded-xl font-semibold text-lg transition-all inline-flex items-center space-x-2"
-              >
-                <Video className="w-5 h-5" />
-                <span>Watch Demo</span>
+                <span>Create Your First Video Free</span>
               </button>
             </div>
+
+            <p className="text-slate-500 text-sm mt-4">Join 10,000+ creators already using Smart Animator</p>
           </div>
 
           <div className="relative mb-20">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 blur-3xl"></div>
-            <div className="relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="relative group cursor-pointer" onClick={() => handleDemoClick("Camera slowly zooms in while subject turns head slightly, soft lighting creates depth")}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl"></div>
-                  <div className="relative aspect-video bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl overflow-hidden border border-slate-600">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <Film className="w-20 h-20 text-slate-500 mx-auto mb-4" />
-                        <p className="text-slate-400 font-medium">Static Image</p>
-                      </div>
-                    </div>
-                    <div className="absolute top-4 left-4 bg-slate-950/90 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-700">
-                      <span className="text-slate-300 text-xs font-bold">BEFORE</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative group cursor-pointer" onClick={() => handleDemoClick("Camera slowly zooms in while subject turns head slightly, soft lighting creates depth")}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 to-cyan-600/30 rounded-2xl blur-xl"></div>
-                  <div className="relative aspect-video bg-gradient-to-br from-blue-900/40 to-cyan-900/40 rounded-2xl overflow-hidden border-2 border-cyan-500/50">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="relative">
-                          <Video className="w-20 h-20 text-cyan-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                          <div className="absolute -top-2 -right-2 w-4 h-4 bg-cyan-400 rounded-full animate-pulse"></div>
-                        </div>
-                        <p className="text-cyan-400 font-bold">Animated Video</p>
-                      </div>
-                    </div>
-                    <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-2 rounded-lg">
-                      <span className="text-white text-xs font-bold">AFTER</span>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-all"></div>
-                  </div>
-                </div>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-2">
+                <TrendingUp className="w-4 h-4 text-green-400" />
+                <span className="text-green-400 font-semibold text-sm">Real Results: 3x More Engagement</span>
               </div>
-
-              <div className="mt-8 text-center">
-                <p className="text-slate-400 mb-2">Try this example prompt:</p>
-                <div className="bg-slate-950/50 border border-slate-700 rounded-xl p-4 inline-block">
-                  <p className="text-cyan-400 italic">"Camera slowly zooms in while subject turns head slightly, soft lighting creates depth"</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <button
+                onClick={() => handleDemoClick("Slowly rotate the product 360 degrees, smooth studio lighting")}
+                className="group relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 rounded-2xl p-6 text-left transition-all overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
+                <div className="relative aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
+                  <Film className="w-16 h-16 text-slate-600 group-hover:scale-110 transition-transform" />
                 </div>
-              </div>
+                <h3 className="text-white font-bold text-lg mb-2 group-hover:text-blue-400 transition-colors">Product Demos</h3>
+                <p className="text-slate-400 text-sm">Showcase products with smooth 360° rotation</p>
+              </button>
+
+              <button
+                onClick={() => handleDemoClick("Gentle breathing motion, hair moves slightly in breeze, slow zoom")}
+                className="group relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 rounded-2xl p-6 text-left transition-all overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
+                <div className="relative aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
+                  <Video className="w-16 h-16 text-slate-600 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2 group-hover:text-cyan-400 transition-colors">Social Content</h3>
+                <p className="text-slate-400 text-sm">Create attention-grabbing posts that convert</p>
+              </button>
+
+              <button
+                onClick={() => handleDemoClick("Dramatic zoom in, background blur, energetic movement")}
+                className="group relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 rounded-2xl p-6 text-left transition-all overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
+                <div className="relative aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
+                  <Sparkles className="w-16 h-16 text-slate-600 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-400 transition-colors">Marketing Campaigns</h3>
+                <p className="text-slate-400 text-sm">Visuals that drive clicks and conversions</p>
+              </button>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-slate-400 text-sm">Click any example above to try it instantly</p>
             </div>
           </div>
 
@@ -132,29 +147,29 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
               <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/30">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Lightning Fast</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">Launch Campaigns 10x Faster</h3>
               <p className="text-slate-300 leading-relaxed">
-                Generate professional animations in seconds. No waiting, no rendering queues.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-900/20 to-purple-950/20 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-8 hover:border-purple-400/50 transition-all group">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">AI-Powered</h3>
-              <p className="text-slate-300 leading-relaxed">
-                Advanced Google Veo 3.1 technology understands natural motion and creates realistic animations.
+                What used to take your design team hours now takes 60 seconds. Ship content while your competitors are still planning.
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-cyan-900/20 to-cyan-950/20 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-8 hover:border-cyan-400/50 transition-all group">
               <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30">
-                <Settings className="w-8 h-8 text-white" />
+                <Sparkles className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Full Control</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">No Design Skills Needed</h3>
               <p className="text-slate-300 leading-relaxed">
-                Customize aspect ratio, duration, resolution, and animation style to match your vision.
+                Our AI does the heavy lifting. Simply describe what you want in plain English - no complex tools or training required.
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-900/20 to-green-950/20 backdrop-blur-sm border border-green-500/30 rounded-2xl p-8 hover:border-green-400/50 transition-all group">
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-green-500/30">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">Proven to Boost Engagement</h3>
+              <p className="text-slate-300 leading-relaxed">
+                Our users report 3x more clicks, longer view times, and higher conversion rates compared to static images.
               </p>
             </div>
           </div>
@@ -216,56 +231,61 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
             <div className="mt-16 text-center">
               <button
                 onClick={onGetStarted}
-                className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-500 hover:via-purple-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 transition-all inline-flex items-center space-x-3"
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 transition-all inline-flex items-center space-x-3"
               >
                 <Sparkles className="w-6 h-6" />
-                <span>Try It Free Now</span>
+                <span>Start Creating Free Videos</span>
               </button>
             </div>
           </div>
 
+          <Testimonials />
+
           <div className="mb-20">
             <h2 className="text-4xl font-bold text-center mb-4">
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Endless Possibilities
+                Perfect For Every Use Case
               </span>
             </h2>
             <p className="text-slate-400 text-center max-w-3xl mx-auto mb-12 text-lg">
-              From social media to e-commerce, bring your creative vision to life
+              Transform your content strategy with AI-powered animations
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <button
                 onClick={() => handleDemoClick("Slowly rotate the product 360 degrees, camera orbits smoothly, soft studio lighting")}
-                className="group bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 hover:border-blue-500/50 rounded-2xl p-6 text-left transition-all"
+                className="group bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 hover:border-orange-500/50 rounded-2xl p-6 text-left transition-all"
               >
                 <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">
                   <Layers className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">Product Demos</h3>
-                <p className="text-slate-400 text-sm">Showcase products with 360° rotation and dynamic views</p>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">E-commerce</h3>
+                <p className="text-slate-400 text-sm mb-3">360° product views increase sales by 47%</p>
+                <p className="text-orange-400 text-xs font-semibold">Click to try</p>
               </button>
 
               <button
                 onClick={() => handleDemoClick("Gentle breathing motion, hair moves slightly in the breeze, slow zoom in")}
-                className="group bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 hover:border-purple-500/50 rounded-2xl p-6 text-left transition-all"
+                className="group bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 hover:border-pink-500/50 rounded-2xl p-6 text-left transition-all"
               >
                 <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-pink-500/30">
                   <Film className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">Social Content</h3>
-                <p className="text-slate-400 text-sm">Create scroll-stopping posts that demand attention</p>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">Social Media</h3>
+                <p className="text-slate-400 text-sm mb-3">Get 3x more engagement vs static posts</p>
+                <p className="text-pink-400 text-xs font-semibold">Click to try</p>
               </button>
 
               <button
                 onClick={() => handleDemoClick("Clouds drift across sky, trees sway gently, camera pans slowly")}
-                className="group bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 hover:border-cyan-500/50 rounded-2xl p-6 text-left transition-all"
+                className="group bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 hover:border-green-500/50 rounded-2xl p-6 text-left transition-all"
               >
                 <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-green-500/30">
                   <Video className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">Landscapes</h3>
-                <p className="text-slate-400 text-sm">Bring nature scenes to life with natural motion</p>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-green-400 transition-colors">Real Estate</h3>
+                <p className="text-slate-400 text-sm mb-3">Bring property photos to life instantly</p>
+                <p className="text-green-400 text-xs font-semibold">Click to try</p>
               </button>
 
               <button
@@ -275,39 +295,58 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-yellow-500/30">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors">Marketing</h3>
-                <p className="text-slate-400 text-sm">Eye-catching visuals that convert viewers to customers</p>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors">Advertising</h3>
+                <p className="text-slate-400 text-sm mb-3">Drive clicks and conversions with motion</p>
+                <p className="text-yellow-400 text-xs font-semibold">Click to try</p>
               </button>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-900/30 via-purple-900/20 to-cyan-900/30 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-16 text-center">
+          <FAQ />
+
+          <div className="bg-gradient-to-br from-blue-900/30 via-cyan-900/20 to-blue-900/30 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-12 md:p-16 text-center">
             <div className="max-w-3xl mx-auto">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl mb-8 shadow-2xl shadow-blue-500/50">
                 <Sparkles className="w-10 h-10 text-white" />
               </div>
 
-              <h2 className="text-5xl font-black mb-6">
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                  Ready to Create Magic?
+              <h2 className="text-4xl md:text-5xl font-black mb-6">
+                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  Start Creating Today
                 </span>
               </h2>
 
               <p className="text-xl text-slate-300 mb-10 leading-relaxed">
-                Join creators worldwide who are transforming static images into dynamic videos.
-                Start animating for free - no credit card required.
+                Join 10,000+ creators transforming static images into engaging videos.
+                No credit card required. Start free in seconds.
               </p>
 
               <button
                 onClick={onGetStarted}
-                className="group bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-500 hover:via-purple-500 hover:to-cyan-500 text-white px-12 py-6 rounded-2xl font-black text-xl shadow-2xl shadow-blue-500/50 hover:shadow-blue-500/70 hover:scale-105 transition-all inline-flex items-center space-x-4"
+                className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-12 py-6 rounded-2xl font-black text-xl shadow-2xl shadow-blue-500/50 hover:shadow-blue-500/70 hover:scale-105 transition-all inline-flex items-center space-x-4"
               >
                 <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
-                <span>Start Animating Free</span>
-                <Zap className="w-7 h-7 group-hover:-rotate-12 transition-transform" />
+                <span>Create Your First Video Free</span>
               </button>
 
-              <p className="text-slate-500 text-sm mt-6">No signup required • Instant results • HD downloads</p>
+              <div className="flex flex-wrap gap-6 justify-center items-center mt-8 text-slate-400 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>5 free videos</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>HD quality</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Commercial use</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-blue-400" />
+                  <span>Secure & private</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
