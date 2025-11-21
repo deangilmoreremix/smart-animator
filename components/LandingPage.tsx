@@ -89,7 +89,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
               </button>
             </div>
 
-            <p className="text-slate-500 text-sm mt-4">Join 10,000+ creators already using Smart Animator</p>
+            <p className="text-slate-500 text-sm mt-4">Join 500+ creators already using Smart Animator</p>
           </div>
 
           <div className="relative mb-20">
@@ -335,7 +335,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
               </h2>
 
               <p className="text-xl text-slate-300 mb-10 leading-relaxed">
-                Join 10,000+ creators transforming static images into engaging videos.
+                Join 500+ creators transforming static images into engaging videos.
                 Get started in seconds.
               </p>
 

@@ -79,17 +79,17 @@ const Testimonials: React.FC = () => {
         </p>
         <div className="flex items-center justify-center gap-6 mt-6">
           <div className="text-center">
-            <p className="text-3xl font-bold text-white">50,000+</p>
+            <p className="text-3xl font-bold text-white">2,500+</p>
             <p className="text-slate-400 text-sm">Videos Created</p>
           </div>
           <div className="w-px h-12 bg-slate-700"></div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-white">4.9/5</p>
+            <p className="text-3xl font-bold text-white">4.8/5</p>
             <p className="text-slate-400 text-sm">User Rating</p>
           </div>
           <div className="w-px h-12 bg-slate-700"></div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-white">10,000+</p>
+            <p className="text-3xl font-bold text-white">500+</p>
             <p className="text-slate-400 text-sm">Happy Users</p>
           </div>
         </div>
