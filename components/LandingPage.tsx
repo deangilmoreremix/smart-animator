@@ -105,8 +105,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="group relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 rounded-2xl p-6 text-left transition-all overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
-                <div className="relative aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
-                  <Film className="w-16 h-16 text-slate-600 group-hover:scale-110 transition-transform" />
+                <div className="relative aspect-video rounded-xl mb-4 overflow-hidden">
+                  <img
+                    src="https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=800"
+                    alt="Product photography"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent"></div>
+                  <Film className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2 group-hover:text-blue-400 transition-colors">Product Demos</h3>
                 <p className="text-slate-400 text-sm">Showcase products with smooth 360° rotation</p>
@@ -117,8 +123,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="group relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 rounded-2xl p-6 text-left transition-all overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
-                <div className="relative aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
-                  <Video className="w-16 h-16 text-slate-600 group-hover:scale-110 transition-transform" />
+                <div className="relative aspect-video rounded-xl mb-4 overflow-hidden">
+                  <img
+                    src="https://images.pexels.com/photos/1559486/pexels-photo-1559486.jpeg?auto=compress&cs=tinysrgb&w=800"
+                    alt="Social media content"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent"></div>
+                  <Video className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2 group-hover:text-cyan-400 transition-colors">Social Content</h3>
                 <p className="text-slate-400 text-sm">Create attention-grabbing posts that convert</p>
@@ -129,8 +141,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="group relative bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 rounded-2xl p-6 text-left transition-all overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
-                <div className="relative aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
-                  <Sparkles className="w-16 h-16 text-slate-600 group-hover:scale-110 transition-transform" />
+                <div className="relative aspect-video rounded-xl mb-4 overflow-hidden">
+                  <img
+                    src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
+                    alt="Marketing campaign"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent"></div>
+                  <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-400 transition-colors">Marketing Campaigns</h3>
                 <p className="text-slate-400 text-sm">Visuals that drive clicks and conversions</p>
