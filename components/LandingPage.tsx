@@ -67,15 +67,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
             <div className="flex flex-wrap gap-4 justify-center items-center mb-10">
               <div className="flex items-center gap-2 text-slate-300">
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm">No credit card required</span>
+                <span className="text-sm">Professional quality</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm">5 free videos to start</span>
+                <span className="text-sm">HD video exports</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm">HD quality downloads</span>
+                <span className="text-sm">60 second processing</span>
               </div>
             </div>
 
@@ -85,7 +85,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 transition-all inline-flex items-center space-x-3"
               >
                 <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                <span>Create Your First Video Free</span>
+                <span>Create Your First Video</span>
               </button>
             </div>
 
@@ -234,7 +234,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 transition-all inline-flex items-center space-x-3"
               >
                 <Sparkles className="w-6 h-6" />
-                <span>Start Creating Free Videos</span>
+                <span>Start Creating Videos</span>
               </button>
             </div>
           </div>
@@ -318,7 +318,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
 
               <p className="text-xl text-slate-300 mb-10 leading-relaxed">
                 Join 10,000+ creators transforming static images into engaging videos.
-                No credit card required. Start free in seconds.
+                Get started in seconds.
               </p>
 
               <button
@@ -326,14 +326,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-12 py-6 rounded-2xl font-black text-xl shadow-2xl shadow-blue-500/50 hover:shadow-blue-500/70 hover:scale-105 transition-all inline-flex items-center space-x-4"
               >
                 <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
-                <span>Create Your First Video Free</span>
+                <span>Create Your First Video</span>
               </button>
 
               <div className="flex flex-wrap gap-6 justify-center items-center mt-8 text-slate-400 text-sm">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span>5 free videos</span>
-                </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-400" />
                   <span>HD quality</span>

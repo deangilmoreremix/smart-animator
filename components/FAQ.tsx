@@ -29,7 +29,7 @@ const faqData: FAQItem[] = [
   },
   {
     question: "Is there a limit to how many videos I can create?",
-    answer: "Free accounts get 5 video generations to start. Upgrade to our paid plans for unlimited creations, priority processing, and access to advanced features like longer videos and custom resolutions."
+    answer: "Pricing is flexible based on your needs. Our plans range from starter packages to unlimited professional tiers with priority processing and advanced features like longer videos and custom resolutions."
   },
   {
     question: "How does the AI understand what motion I want?",
