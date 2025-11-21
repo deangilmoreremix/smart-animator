@@ -1,5 +1,7 @@
 import React from 'react';
 import { Star } from './Icons';
+import TiltCard from './TiltCard';
+import AnimatedCounter from './AnimatedCounter';
 
 interface TestimonialProps {
   name: string;
@@ -46,23 +48,25 @@ const testimonials: TestimonialProps[] = [
 ];
 
 const Testimonial: React.FC<TestimonialProps> = ({ name, role, company, content, rating, avatar }) => (
-  <div className="bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:border-blue-500/30 transition-all">
+  <TiltCard>
+    <div className="glass-card rounded-2xl p-6 hover:border-emerald-500/30 transition-all h-full">
     <div className="flex gap-1 mb-4">
       {[...Array(rating)].map((_, i) => (
         <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
       ))}
     </div>
-    <p className="text-slate-300 mb-6 leading-relaxed">{content}</p>
-    <div className="flex items-center gap-3">
-      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
-        {avatar}
-      </div>
-      <div>
-        <p className="text-white font-semibold">{name}</p>
-        <p className="text-slate-400 text-sm">{role} at {company}</p>
+      <p className="text-slate-300 mb-6 leading-relaxed">{content}</p>
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/30">
+          {avatar}
+        </div>
+        <div>
+          <p className="text-white font-semibold">{name}</p>
+          <p className="text-slate-400 text-sm">{role} at {company}</p>
+        </div>
       </div>
     </div>
-  </div>
+  </TiltCard>
 );
 
 const Testimonials: React.FC = () => {
@@ -70,7 +74,7 @@ const Testimonials: React.FC = () => {
     <div className="mb-20">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4">
-          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="text-gradient-emerald animate-gradient">
             Loved by Creators Worldwide
           </span>
         </h2>
@@ -79,18 +83,18 @@ const Testimonials: React.FC = () => {
         </p>
         <div className="flex items-center justify-center gap-6 mt-6">
           <div className="text-center">
-            <p className="text-3xl font-bold text-white">2,500+</p>
-            <p className="text-slate-400 text-sm">Videos Created</p>
+            <AnimatedCounter end={2500} suffix="+" className="text-3xl font-bold text-gradient-emerald" />
+            <p className="text-slate-400 text-sm mt-1">Videos Created</p>
           </div>
-          <div className="w-px h-12 bg-slate-700"></div>
+          <div className="w-px h-12 bg-gradient-to-b from-transparent via-slate-700 to-transparent"></div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-white">4.8/5</p>
-            <p className="text-slate-400 text-sm">User Rating</p>
+            <p className="text-3xl font-bold text-gradient-emerald">4.8/5</p>
+            <p className="text-slate-400 text-sm mt-1">User Rating</p>
           </div>
-          <div className="w-px h-12 bg-slate-700"></div>
+          <div className="w-px h-12 bg-gradient-to-b from-transparent via-slate-700 to-transparent"></div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-white">500+</p>
-            <p className="text-slate-400 text-sm">Happy Users</p>
+            <AnimatedCounter end={500} suffix="+" className="text-3xl font-bold text-gradient-emerald" />
+            <p className="text-slate-400 text-sm mt-1">Happy Users</p>
           </div>
         </div>
       </div>

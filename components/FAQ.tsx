@@ -42,13 +42,13 @@ const faqData: FAQItem[] = [
 ];
 
 const FAQItem: React.FC<{ item: FAQItem; isOpen: boolean; onClick: () => void }> = ({ item, isOpen, onClick }) => (
-  <div className="border border-slate-700/50 rounded-xl overflow-hidden bg-gradient-to-br from-slate-900/50 to-slate-950/50 backdrop-blur-sm hover:border-blue-500/30 transition-all">
+  <div className="glass-card rounded-xl overflow-hidden hover:border-emerald-500/30 transition-all">
     <button
       onClick={onClick}
       className="w-full px-6 py-5 flex items-center justify-between text-left"
     >
       <span className="text-white font-semibold text-lg pr-4">{item.question}</span>
-      <ChevronDown className={`w-5 h-5 text-slate-400 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      <ChevronDown className={`w-5 h-5 text-emerald-400 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
     </button>
     <div className={`overflow-hidden transition-all ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
       <div className="px-6 pb-5 text-slate-300 leading-relaxed">
@@ -65,7 +65,7 @@ const FAQ: React.FC = () => {
     <div className="mb-20">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4">
-          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="text-gradient-emerald animate-gradient">
             Frequently Asked Questions
           </span>
         </h2>
