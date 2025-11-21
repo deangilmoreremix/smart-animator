@@ -57,11 +57,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-              <span className="text-white">Stop Losing Engagement.</span>
-              <br />
               <span className="text-gradient-emerald animate-gradient">
                 Create Scroll-Stopping Videos
               </span>
+              <br />
+              <span className="text-white">from Your Still Photos</span>
               <br />
               <span className="text-white">in 60 Seconds</span>
             </h1>
