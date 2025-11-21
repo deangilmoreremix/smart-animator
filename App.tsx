@@ -4,12 +4,13 @@ import VeoAnimator from './components/VeoAnimator';
 import LandingPage from './components/LandingPage';
 import History from './components/History';
 import AuthPage from './components/AuthPage';
-import { RefreshCw, Film, Clock, LogOut, User } from './components/Icons';
+import AdminPanel from './components/AdminPanel';
+import { RefreshCw, Film, Clock, LogOut, User, Shield } from './components/Icons';
 
-type Page = 'landing' | 'animator' | 'history';
+type Page = 'landing' | 'animator' | 'history' | 'admin';
 
 const AppContent: React.FC = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, isSuperAdmin } = useAuth();
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [demoPrompt, setDemoPrompt] = useState<string | null>(null);
   const [showAuthPage, setShowAuthPage] = useState(false);
@@ -67,6 +68,8 @@ const AppContent: React.FC = () => {
         return <VeoAnimator initialPrompt={demoPrompt} />;
       case 'history':
         return <History />;
+      case 'admin':
+        return <AdminPanel />;
       default:
         return (
           <LandingPage
@@ -122,6 +125,19 @@ const AppContent: React.FC = () => {
                 <Clock className="w-4 h-4 inline mr-2" />
                 History
               </button>
+              {isSuperAdmin && (
+                <button
+                  onClick={() => setCurrentPage('admin')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    currentPage === 'admin'
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  }`}
+                >
+                  <Shield className="w-4 h-4 inline mr-2" />
+                  Admin
+                </button>
+              )}
             </nav>
           </div>
           <div className="flex items-center gap-4">
@@ -168,6 +184,19 @@ const AppContent: React.FC = () => {
               <Clock className="w-4 h-4 inline mr-2" />
               History
             </button>
+            {isSuperAdmin && (
+              <button
+                onClick={() => setCurrentPage('admin')}
+                className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  currentPage === 'admin'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <Shield className="w-4 h-4 inline mr-2" />
+                Admin
+              </button>
+            )}
           </div>
         </div>
       </header>
