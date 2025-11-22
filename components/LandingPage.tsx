@@ -13,6 +13,14 @@ import SocialProofBanner from './SocialProofBanner';
 import ComparisonSection from './ComparisonSection';
 import GuaranteeSection from './GuaranteeSection';
 import ROICalculator from './ROICalculator';
+import ParticleBackground from './ParticleBackground';
+import TypewriterText from './TypewriterText';
+import IndustryShowcase from './IndustryShowcase';
+import VideoShowcase from './VideoShowcase';
+import StatsCounter from './StatsCounter';
+import FeaturesTabs from './FeaturesTabs';
+import TemplateGallery from './TemplateGallery';
+import AnimatedSection from './AnimatedSection';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -31,6 +39,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative">
       <AnimatedBackground />
+      <ParticleBackground />
       <ScrollProgress />
       <UrgencyBanner />
 
@@ -65,12 +74,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-              <span className="text-white">Stuck With </span>
-              <span className="text-red-400">Static Images</span>
-              <span className="text-white">?</span>
+              <span className="text-white">Turn </span>
+              <TypewriterText
+                texts={['Static Images', 'Photos', 'Designs', 'Graphics']}
+                className="text-red-400"
+              />
               <br />
+              <span className="text-white">Into </span>
               <span className="text-gradient-emerald animate-gradient">
-                Turn Them Into Videos
+                Engaging Videos
               </span>
               <br />
               <span className="text-white">in 60 Seconds</span>
@@ -185,13 +197,23 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
 
       <SocialProofBanner />
 
+      <StatsCounter />
+
       <ProblemSection />
 
       <SolutionSection onGetStarted={onGetStarted} />
 
+      <VideoShowcase />
+
       <ComparisonSection />
 
+      <FeaturesTabs />
+
       <ROICalculator />
+
+      <IndustryShowcase />
+
+      <TemplateGallery />
 
       <Testimonials />
 
