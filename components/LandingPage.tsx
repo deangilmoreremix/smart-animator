@@ -21,6 +21,13 @@ import StatsCounter from './StatsCounter';
 import FeaturesTabs from './FeaturesTabs';
 import TemplateGallery from './TemplateGallery';
 import AnimatedSection from './AnimatedSection';
+import ProductTour from './ProductTour';
+import SuccessStories from './SuccessStories';
+import PricingSection from './PricingSection';
+import IntegrationsSection from './IntegrationsSection';
+import SecuritySection from './SecuritySection';
+import BlogPreview from './BlogPreview';
+import CompetitorComparison from './CompetitorComparison';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -203,19 +210,33 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
 
       <SolutionSection onGetStarted={onGetStarted} />
 
+      <ProductTour />
+
       <VideoShowcase />
 
       <ComparisonSection />
 
+      <CompetitorComparison />
+
       <FeaturesTabs />
+
+      <PricingSection />
 
       <ROICalculator />
 
       <IndustryShowcase />
 
+      <SuccessStories />
+
       <TemplateGallery />
 
+      <IntegrationsSection />
+
       <Testimonials />
+
+      <SecuritySection />
+
+      <BlogPreview />
 
       <GuaranteeSection />
 
