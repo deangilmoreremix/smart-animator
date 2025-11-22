@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { contactService, type Contact, type Campaign } from '../services/contactService';
 import { databaseService, type VideoGeneration } from '../services/supabase';
-import { Send, Users, Mail } from './Icons';
+import { aiService, type PersonalizationContext } from '../services/aiService';
+import { emailService } from '../services/emailService';
+import { Send, Users, Mail, Sparkles, Settings } from './Icons';
 
 export const DistributionPage: React.FC = () => {
   const { user } = useAuth();
@@ -15,12 +17,24 @@ export const DistributionPage: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [sending, setSending] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [useAI, setUseAI] = useState(false);
+  const [aiAvailable, setAiAvailable] = useState(false);
+  const [showSmtpConfig, setShowSmtpConfig] = useState(false);
+  const [smtpEmail, setSmtpEmail] = useState('');
+  const [smtpPassword, setSmtpPassword] = useState('');
+  const [smtpProvider, setSmtpProvider] = useState<'gmail' | 'outlook'>('gmail');
 
   useEffect(() => {
     if (user) {
       loadData();
+      checkAI();
     }
   }, [user]);
+
+  const checkAI = async () => {
+    const available = await aiService.checkConnection();
+    setAiAvailable(available);
+  };
 
   const loadData = async () => {
     if (!user) return;
@@ -57,8 +71,24 @@ export const DistributionPage: React.FC = () => {
       .replace(/\{email\}/g, contact.email || '');
   };
 
+  const configureEmail = () => {
+    if (smtpProvider === 'gmail') {
+      emailService.configureGmail(smtpEmail, smtpPassword);
+    } else {
+      emailService.configureOutlook(smtpEmail, smtpPassword);
+    }
+    setShowSmtpConfig(false);
+    alert('Email configured successfully!');
+  };
+
   const handleSendCampaign = async () => {
     if (!user || !selectedVideo || selectedContacts.size === 0) return;
+
+    if (!emailService.getStatus().configured) {
+      alert('Please configure email settings first');
+      setShowSmtpConfig(true);
+      return;
+    }
 
     setSending(true);
     setProgress({ current: 0, total: selectedContacts.size });
@@ -86,24 +116,76 @@ export const DistributionPage: React.FC = () => {
       setProgress({ current: i + 1, total: selectedContactsList.length });
 
       try {
-        const personalizedSubject = personalizeMessage(subject, contact);
-        const personalizedMessage = personalizeMessage(messageTemplate, contact);
+        let personalizedSubject = subject;
+        let personalizedMessage = messageTemplate;
 
-        await contactService.createSend({
+        if (useAI && aiAvailable) {
+          const context: PersonalizationContext = {
+            firstName: contact.first_name,
+            lastName: contact.last_name,
+            company: contact.company,
+            industry: contact.industry,
+            email: contact.email,
+          };
+
+          personalizedSubject = await aiService.generateEmailSubject(
+            context,
+            subject,
+            {}
+          );
+
+          personalizedMessage = await aiService.generateEmailBody(
+            context,
+            messageTemplate,
+            selectedVideo.title,
+            {}
+          );
+        } else {
+          personalizedSubject = personalizeMessage(subject, contact);
+          personalizedMessage = personalizeMessage(messageTemplate, contact);
+        }
+
+        const send = await contactService.createSend({
           campaign_id: campaign.id!,
           contact_id: contact.id!,
           channel: 'email',
-          status: 'queued',
+          status: 'pending',
           personalized_subject: personalizedSubject,
           personalized_message: personalizedMessage,
         });
 
-        successCount++;
+        if (send && contact.email) {
+          const emailHtml = emailService.createEmailTemplate(
+            selectedVideo.video_url || '',
+            selectedVideo.title,
+            personalizedMessage,
+            contact.first_name
+          );
+
+          const result = await emailService.sendEmail({
+            to: contact.email,
+            subject: personalizedSubject,
+            html: emailHtml,
+          });
+
+          if (result.success) {
+            await contactService.updateSend(send.id!, {
+              status: 'sent',
+              sent_at: new Date().toISOString(),
+            });
+            successCount++;
+          } else {
+            await contactService.updateSend(send.id!, {
+              status: 'failed',
+              error_message: result.error,
+            });
+          }
+        }
       } catch (error) {
-        console.error('Error queueing send for contact:', contact.email, error);
+        console.error('Error sending to contact:', contact.email, error);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     await contactService.updateCampaign(campaign.id!, {
@@ -112,7 +194,7 @@ export const DistributionPage: React.FC = () => {
     });
 
     setSending(false);
-    alert(`Campaign created! ${successCount} messages queued for sending.`);
+    alert(`Campaign completed! Sent ${successCount} out of ${selectedContacts.size} emails.`);
     setSelectedVideo(null);
     setSelectedContacts(new Set());
     setCampaignName('');
@@ -127,7 +209,77 @@ export const DistributionPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-white mb-2">Video Distribution</h2>
           <p className="text-slate-400">Send personalized video messages to your contacts</p>
         </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowSmtpConfig(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          >
+            <Settings className="w-5 h-5" />
+            {emailService.getStatus().configured ? 'Email Configured' : 'Configure Email'}
+          </button>
+          {aiAvailable && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-900/30 border border-emerald-500/30 rounded-lg">
+              <Sparkles className="w-5 h-5 text-emerald-400" />
+              <span className="text-emerald-400 text-sm font-medium">AI Available</span>
+            </div>
+          )}
+        </div>
       </div>
+
+      {showSmtpConfig && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-white mb-4">Configure Email</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Provider</label>
+                <select
+                  value={smtpProvider}
+                  onChange={(e) => setSmtpProvider(e.target.value as 'gmail' | 'outlook')}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="gmail">Gmail</option>
+                  <option value="outlook">Outlook</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={smtpEmail}
+                  onChange={(e) => setSmtpEmail(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Password / App Password</label>
+                <input
+                  type="password"
+                  value={smtpPassword}
+                  onChange={(e) => setSmtpPassword(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <p className="text-xs text-slate-500">For Gmail, use an App Password. For Outlook, use your regular password.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={configureEmail}
+                  disabled={!smtpEmail || !smtpPassword}
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setShowSmtpConfig(false)}
+                  className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
@@ -248,6 +400,27 @@ export const DistributionPage: React.FC = () => {
                   Use merge tags: {'{'}firstName{'}'}, {'{'}lastName{'}'}, {'{'}company{'}'}, {'{'}industry{'}'}
                 </p>
               </div>
+
+              <label className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={useAI}
+                  onChange={(e) => setUseAI(e.target.checked)}
+                  disabled={!aiAvailable}
+                  className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 rounded focus:ring-blue-500"
+                />
+                <div className="flex-1">
+                  <div className="text-white text-sm font-medium flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-blue-400" />
+                    AI Personalization
+                  </div>
+                  <div className="text-slate-400 text-xs">
+                    {aiAvailable
+                      ? 'Generate unique messages for each recipient'
+                      : 'AI service not available. Using template personalization.'}
+                  </div>
+                </div>
+              </label>
 
             </div>
           </div>
