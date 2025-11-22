@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { contactService, type Contact, type Campaign } from '../services/contactService';
 import { databaseService, type VideoGeneration } from '../services/supabase';
-import { ollamaService, type PersonalizationContext } from '../services/ollamaService';
-import { emailService } from '../services/emailService';
-import { Send, Users, Sparkles, Mail, MessageCircle, Share2, X, Check } from './Icons';
+import { Send, Users, Mail } from './Icons';
 
 export const DistributionPage: React.FC = () => {
   const { user } = useAuth();
@@ -15,15 +13,12 @@ export const DistributionPage: React.FC = () => {
   const [campaignName, setCampaignName] = useState('');
   const [messageTemplate, setMessageTemplate] = useState('');
   const [subject, setSubject] = useState('');
-  const [useAI, setUseAI] = useState(true);
   const [sending, setSending] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [ollamaStatus, setOllamaStatus] = useState({ available: false, host: '' });
 
   useEffect(() => {
     if (user) {
       loadData();
-      checkOllama();
     }
   }, [user]);
 
@@ -33,13 +28,6 @@ export const DistributionPage: React.FC = () => {
     const contactsData = await contactService.getContacts(user.id);
     setVideos(videosData.filter(v => v.status === 'completed'));
     setContacts(contactsData);
-  };
-
-  const checkOllama = async () => {
-    const status = ollamaService.getStatus();
-    setOllamaStatus(status);
-    const connected = await ollamaService.checkConnection();
-    setOllamaStatus({ ...status, available: connected });
   };
 
   const toggleContact = (contactId: string) => {
@@ -58,6 +46,15 @@ export const DistributionPage: React.FC = () => {
     } else {
       setSelectedContacts(new Set(contacts.map(c => c.id!)));
     }
+  };
+
+  const personalizeMessage = (template: string, contact: Contact): string => {
+    return template
+      .replace(/\{firstName\}/g, contact.first_name || '')
+      .replace(/\{lastName\}/g, contact.last_name || '')
+      .replace(/\{company\}/g, contact.company || '')
+      .replace(/\{industry\}/g, contact.industry || '')
+      .replace(/\{email\}/g, contact.email || '');
   };
 
   const handleSendCampaign = async () => {
@@ -89,89 +86,24 @@ export const DistributionPage: React.FC = () => {
       setProgress({ current: i + 1, total: selectedContactsList.length });
 
       try {
-        let personalizedSubject = subject;
-        let personalizedMessage = messageTemplate;
+        const personalizedSubject = personalizeMessage(subject, contact);
+        const personalizedMessage = personalizeMessage(messageTemplate, contact);
 
-        if (useAI && ollamaStatus.available) {
-          const context: PersonalizationContext = {
-            firstName: contact.first_name,
-            lastName: contact.last_name,
-            company: contact.company,
-            industry: contact.industry,
-            email: contact.email,
-          };
-
-          if (subject) {
-            personalizedSubject = await ollamaService.generateEmailSubject(
-              context,
-              subject,
-              {}
-            );
-          }
-
-          if (messageTemplate) {
-            personalizedMessage = await ollamaService.generateEmailBody(
-              context,
-              messageTemplate,
-              selectedVideo.title,
-              {}
-            );
-          }
-        } else {
-          personalizedMessage = await ollamaService.personalizeTemplate(
-            messageTemplate,
-            {
-              firstName: contact.first_name,
-              lastName: contact.last_name,
-              company: contact.company,
-              industry: contact.industry,
-              email: contact.email,
-            }
-          );
-        }
-
-        const send = await contactService.createSend({
+        await contactService.createSend({
           campaign_id: campaign.id!,
           contact_id: contact.id!,
           channel: 'email',
-          status: 'pending',
+          status: 'queued',
           personalized_subject: personalizedSubject,
           personalized_message: personalizedMessage,
         });
 
-        if (send && contact.email) {
-          const emailHtml = emailService.createEmailTemplate(
-            selectedVideo.video_url || '',
-            selectedVideo.title,
-            personalizedMessage,
-            contact.first_name
-          );
-
-          const result = await emailService.sendEmailWithTracking({
-            to: contact.email,
-            subject: personalizedSubject,
-            html: emailHtml,
-            trackingId: send.id,
-          });
-
-          if (result.success) {
-            await contactService.updateSend(send.id!, {
-              status: 'sent',
-              sent_at: new Date().toISOString(),
-            });
-            successCount++;
-          } else {
-            await contactService.updateSend(send.id!, {
-              status: 'failed',
-              error_message: result.error,
-            });
-          }
-        }
+        successCount++;
       } catch (error) {
-        console.error('Error sending to contact:', contact.email, error);
+        console.error('Error queueing send for contact:', contact.email, error);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 50));
     }
 
     await contactService.updateCampaign(campaign.id!, {
@@ -180,7 +112,7 @@ export const DistributionPage: React.FC = () => {
     });
 
     setSending(false);
-    alert(`Campaign completed! Sent ${successCount} out of ${selectedContacts.size} emails.`);
+    alert(`Campaign created! ${successCount} messages queued for sending.`);
     setSelectedVideo(null);
     setSelectedContacts(new Set());
     setCampaignName('');
@@ -195,16 +127,6 @@ export const DistributionPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-white mb-2">Video Distribution</h2>
           <p className="text-slate-400">Send personalized video messages to your contacts</p>
         </div>
-        {ollamaStatus.available ? (
-          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-900/30 border border-emerald-500/30 rounded-lg">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="text-emerald-400 text-sm font-medium">AI Personalization Active</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 px-4 py-2 bg-amber-900/30 border border-amber-500/30 rounded-lg">
-            <span className="text-amber-400 text-sm">Ollama not connected</span>
-          </div>
-        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -327,26 +249,6 @@ export const DistributionPage: React.FC = () => {
                 </p>
               </div>
 
-              <label className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
-                <input
-                  type="checkbox"
-                  checked={useAI}
-                  onChange={(e) => setUseAI(e.target.checked)}
-                  disabled={!ollamaStatus.available}
-                  className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 rounded focus:ring-blue-500"
-                />
-                <div className="flex-1">
-                  <div className="text-white text-sm font-medium flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-blue-400" />
-                    AI Personalization
-                  </div>
-                  <div className="text-slate-400 text-xs">
-                    {ollamaStatus.available
-                      ? 'Generate unique messages for each recipient'
-                      : 'Requires Ollama to be running'}
-                  </div>
-                </div>
-              </label>
             </div>
           </div>
 

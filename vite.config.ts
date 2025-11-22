@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/postcss';
 
 export default defineConfig({
   server: {
@@ -8,9 +7,4 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   plugins: [react()],
-  css: {
-    postcss: {
-      plugins: [tailwindcss()],
-    },
-  },
 });
