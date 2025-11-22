@@ -207,3 +207,32 @@ export const Users: React.FC<{ className?: string }> = ({ className }) => (
     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
   </svg>
 );
+
+export const DollarSign: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="12" x2="12" y1="2" y2="22"></line>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+  </svg>
+);
+
+export const TrendingDown: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+    <polyline points="16 17 22 17 22 11"></polyline>
+  </svg>
+);
+
+export const AlertCircle: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" x2="12" y1="8" y2="12"></line>
+    <line x1="12" x2="12.01" y1="16" y2="16"></line>
+  </svg>
+);
+
+export const X: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M18 6 6 18"></path>
+    <path d="m6 6 12 12"></path>
+  </svg>
+);

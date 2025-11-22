@@ -1,12 +1,18 @@
 import React from 'react';
-import { Film, Video, Sparkles, Zap, Layers, Download, CheckCircle, TrendingUp, Shield } from './Icons';
+import { Film, Video, Sparkles, Zap, Layers, Download, CheckCircle, TrendingUp, Shield, Clock } from './Icons';
 import Testimonials from './Testimonials';
 import FAQ from './FAQ';
 import AnimatedBackground from './AnimatedBackground';
 import ScrollProgress from './ScrollProgress';
 import TiltCard from './TiltCard';
 import MagneticButton from './MagneticButton';
-import AnimatedCounter from './AnimatedCounter';
+import UrgencyBanner from './UrgencyBanner';
+import ProblemSection from './ProblemSection';
+import SolutionSection from './SolutionSection';
+import SocialProofBanner from './SocialProofBanner';
+import ComparisonSection from './ComparisonSection';
+import GuaranteeSection from './GuaranteeSection';
+import ROICalculator from './ROICalculator';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -26,7 +32,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative">
       <AnimatedBackground />
       <ScrollProgress />
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/30 glass-card">
+      <UrgencyBanner />
+
+      <header className="sticky top-12 z-40 border-b border-slate-800/30 glass-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/30 animate-pulse-glow">
@@ -36,18 +44,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
           </div>
           <MagneticButton
             onClick={onGetStarted}
-            className="bg-gradient-to-r from-emerald-600 to-cyan-500 hover:from-emerald-500 hover:to-cyan-400 text-white px-6 py-2 rounded-lg font-medium text-sm transition-all shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50"
+            className="group btn-holographic animate-gradient text-white px-8 py-3 rounded-lg font-bold text-sm transition-all shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 inline-flex items-center space-x-2"
           >
-            Sign In
+            <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+            <span>Start Free</span>
           </MagneticButton>
         </div>
       </header>
 
-      <div className="relative overflow-hidden pt-16">
+      <div className="relative overflow-hidden pt-28">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 via-teal-600/5 to-cyan-500/10"></div>
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-teal-500/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
 
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
@@ -57,32 +65,33 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-              <span className="text-gradient-emerald animate-gradient">
-                Create Scroll-Stopping Videos
-              </span>
+              <span className="text-white">Stuck With </span>
+              <span className="text-red-400">Static Images</span>
+              <span className="text-white">?</span>
               <br />
-              <span className="text-white">from Your Still Photos</span>
+              <span className="text-gradient-emerald animate-gradient">
+                Turn Them Into Videos
+              </span>
               <br />
               <span className="text-white">in 60 Seconds</span>
             </h1>
 
             <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Transform any static image into a dynamic video with AI. No design skills needed.
-              Simply describe the motion you want - our AI does the rest.
+              Stop losing engagement to competitors. Transform your static images into scroll-stopping videos that get <span className="text-emerald-400 font-bold">3x more clicks</span> without hiring designers or learning complex software.
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center items-center mb-10">
               <div className="flex items-center gap-2 text-slate-300">
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm">Professional quality</span>
+                <span className="text-sm font-semibold">No credit card required</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm">HD video exports</span>
+                <span className="text-sm font-semibold">Setup in 60 seconds</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm">60 second processing</span>
+                <Clock className="w-5 h-5 text-cyan-400" />
+                <span className="text-sm font-semibold">First video in 2 minutes</span>
               </div>
             </div>
 
@@ -92,18 +101,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                 className="group btn-holographic animate-gradient text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-cyan-500/40 hover:shadow-cyan-500/60 hover:scale-105 transition-all inline-flex items-center space-x-3"
               >
                 <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                <span>Create Your First Video</span>
+                <span>Create Your First Video Free</span>
               </MagneticButton>
             </div>
 
-            <p className="text-slate-500 text-sm mt-4">Join 500+ creators already using Smart Animator</p>
+            <p className="text-slate-400 text-sm mt-4 font-medium">Join 500+ businesses already saving $1000s/month</p>
           </div>
 
           <div className="relative mb-20">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 glass-card border-emerald-500/30 rounded-full px-4 py-2 animate-pulse-glow">
                 <TrendingUp className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400 font-semibold text-sm">Real Results: 3x More Engagement</span>
+                <span className="text-emerald-400 font-semibold text-sm">Click any example to try instantly</span>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -123,7 +132,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                     <Film className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
                   </div>
                   <h3 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Product Demos</h3>
-                  <p className="text-slate-400 text-sm">Showcase products with smooth 360° rotation</p>
+                  <p className="text-slate-400 text-sm mb-2">360° rotation increases sales by 47%</p>
+                  <p className="text-emerald-400 text-xs font-semibold">Try this demo →</p>
                 </button>
               </TiltCard>
 
@@ -143,7 +153,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                     <Video className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
                   </div>
                   <h3 className="text-white font-bold text-lg mb-2 group-hover:text-cyan-400 transition-colors">Social Content</h3>
-                  <p className="text-slate-400 text-sm">Create attention-grabbing posts that convert</p>
+                  <p className="text-slate-400 text-sm mb-2">Get 3x more engagement than static posts</p>
+                  <p className="text-cyan-400 text-xs font-semibold">Try this demo →</p>
                 </button>
               </TiltCard>
 
@@ -163,241 +174,97 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onDemoClick }) 
                     <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
                   </div>
                   <h3 className="text-white font-bold text-lg mb-2 group-hover:text-teal-400 transition-colors">Marketing Campaigns</h3>
-                  <p className="text-slate-400 text-sm">Visuals that drive clicks and conversions</p>
+                  <p className="text-slate-400 text-sm mb-2">Videos that drive clicks and conversions</p>
+                  <p className="text-teal-400 text-xs font-semibold">Try this demo →</p>
                 </button>
               </TiltCard>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="mt-8 text-center">
-              <p className="text-slate-400 text-sm">Click any example above to try it instantly</p>
+      <SocialProofBanner />
+
+      <ProblemSection />
+
+      <SolutionSection onGetStarted={onGetStarted} />
+
+      <ComparisonSection />
+
+      <ROICalculator />
+
+      <Testimonials />
+
+      <GuaranteeSection />
+
+      <div className="relative max-w-7xl mx-auto px-6 py-16">
+        <div className="glass-card rounded-3xl p-12 md:p-16 text-center overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/30 via-cyan-900/20 to-teal-900/30"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
+          <div className="max-w-3xl mx-auto relative">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl mb-8 shadow-2xl shadow-emerald-500/50 animate-pulse-glow">
+              <Sparkles className="w-10 h-10 text-white" />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-            <TiltCard>
-              <div className="glass-card border-emerald-500/30 rounded-2xl p-8 hover:border-emerald-400/50 transition-all group h-full">
-                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/30">
-                  <Zap className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Launch Campaigns 10x Faster</h3>
-                <p className="text-slate-300 leading-relaxed">
-                  What used to take your design team hours now takes 60 seconds. Ship content while your competitors are still planning.
-                </p>
-              </div>
-            </TiltCard>
-
-            <TiltCard>
-              <div className="glass-card border-cyan-500/30 rounded-2xl p-8 hover:border-cyan-400/50 transition-all group h-full">
-                <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30">
-                  <Sparkles className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">No Design Skills Needed</h3>
-                <p className="text-slate-300 leading-relaxed">
-                  Our AI does the heavy lifting. Simply describe what you want in plain English - no complex tools or training required.
-                </p>
-              </div>
-            </TiltCard>
-
-            <TiltCard>
-              <div className="glass-card border-emerald-500/30 rounded-2xl p-8 hover:border-emerald-400/50 transition-all group h-full">
-                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/30">
-                  <TrendingUp className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Proven to Boost Engagement</h3>
-                <p className="text-slate-300 leading-relaxed">
-                  Our users report 3x more clicks, longer view times, and higher conversion rates compared to static images.
-                </p>
-              </div>
-            </TiltCard>
-          </div>
-
-          <div className="glass-card rounded-3xl p-12 mb-20 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-cyan-500/5"></div>
-            <div className="relative">
-              <h2 className="text-4xl font-bold text-center mb-4">
-                <span className="text-gradient-emerald animate-gradient">
-                  How It Works
-                </span>
-              </h2>
-            <p className="text-slate-400 text-center max-w-2xl mx-auto mb-16 text-lg">
-              Three simple steps to create stunning animations
-            </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div className="text-center">
-                  <div className="relative mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-600 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/40 animate-pulse-glow">
-                      <span className="text-3xl font-black text-white">1</span>
-                    </div>
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full"></div>
-                  </div>
-                  <Film className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-3">Upload Image</h3>
-                  <p className="text-slate-400 leading-relaxed">
-                    Drop any image - product photos, portraits, landscapes, or artwork
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="relative mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-br from-teal-600 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-teal-500/40 animate-pulse-glow" style={{ animationDelay: '0.5s' }}>
-                      <span className="text-3xl font-black text-white">2</span>
-                    </div>
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"></div>
-                  </div>
-                  <Sparkles className="w-12 h-12 text-teal-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-3">Describe Motion</h3>
-                  <p className="text-slate-400 leading-relaxed">
-                    Tell our AI how you want it to move using simple natural language
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="relative mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-br from-cyan-600 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-cyan-500/40 animate-pulse-glow" style={{ animationDelay: '1s' }}>
-                      <span className="text-3xl font-black text-white">3</span>
-                    </div>
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full"></div>
-                  </div>
-                  <Download className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-3">Download HD Video</h3>
-                  <p className="text-slate-400 leading-relaxed">
-                    Get your animated video in seconds, ready to share everywhere
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-16 text-center">
-                <MagneticButton
-                  onClick={onGetStarted}
-                  className="btn-holographic animate-gradient text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl shadow-cyan-500/40 hover:shadow-cyan-500/60 hover:scale-105 transition-all inline-flex items-center space-x-3"
-                >
-                  <Sparkles className="w-6 h-6" />
-                  <span>Start Creating Videos</span>
-                </MagneticButton>
-              </div>
-            </div>
-          </div>
-
-          <Testimonials />
-
-          <div className="mb-20">
-            <h2 className="text-4xl font-bold text-center mb-4">
-              <span className="text-gradient-emerald animate-gradient">
-                Perfect For Every Use Case
-              </span>
+            <h2 className="text-4xl md:text-5xl font-black mb-6">
+              <span className="text-white">Ready to </span>
+              <span className="text-gradient-emerald animate-gradient">Stop Losing</span>
+              <br />
+              <span className="text-white">to Your Competitors?</span>
             </h2>
-            <p className="text-slate-400 text-center max-w-3xl mx-auto mb-12 text-lg">
-              Transform your content strategy with AI-powered animations
+
+            <p className="text-xl text-slate-300 mb-10 leading-relaxed">
+              Every day you wait, your competitors capture more attention with dynamic video content. Start creating scroll-stopping videos in the next 2 minutes.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <TiltCard glowColor="rgba(249, 115, 22, 0.3)">
-                <button
-                  onClick={() => handleDemoClick("Slowly rotate the product 360 degrees, camera orbits smoothly, soft studio lighting")}
-                  className="group glass-card hover:border-orange-500/50 rounded-2xl p-6 text-left transition-all w-full h-full"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">
-                    <Layers className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">E-commerce</h3>
-                  <p className="text-slate-400 text-sm mb-3">360° product views increase sales by 47%</p>
-                  <p className="text-orange-400 text-xs font-semibold">Click to try</p>
-                </button>
-              </TiltCard>
+            <MagneticButton
+              onClick={onGetStarted}
+              className="group btn-holographic animate-gradient text-white px-12 py-6 rounded-2xl font-black text-xl shadow-2xl shadow-cyan-500/50 hover:shadow-cyan-500/70 hover:scale-105 transition-all inline-flex items-center space-x-4 mb-6"
+            >
+              <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+              <span>Start Creating Videos Now</span>
+            </MagneticButton>
 
-              <TiltCard glowColor="rgba(236, 72, 153, 0.3)">
-                <button
-                  onClick={() => handleDemoClick("Gentle breathing motion, hair moves slightly in the breeze, slow zoom in")}
-                  className="group glass-card hover:border-pink-500/50 rounded-2xl p-6 text-left transition-all w-full h-full"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-pink-500/30">
-                    <Film className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">Social Media</h3>
-                  <p className="text-slate-400 text-sm mb-3">Get 3x more engagement vs static posts</p>
-                  <p className="text-pink-400 text-xs font-semibold">Click to try</p>
-                </button>
-              </TiltCard>
-
-              <TiltCard glowColor="rgba(16, 185, 129, 0.3)">
-                <button
-                  onClick={() => handleDemoClick("Clouds drift across sky, trees sway gently, camera pans slowly")}
-                  className="group glass-card hover:border-emerald-500/50 rounded-2xl p-6 text-left transition-all w-full h-full"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/30">
-                    <Video className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">Real Estate</h3>
-                  <p className="text-slate-400 text-sm mb-3">Bring property photos to life instantly</p>
-                  <p className="text-emerald-400 text-xs font-semibold">Click to try</p>
-                </button>
-              </TiltCard>
-
-              <TiltCard glowColor="rgba(234, 179, 8, 0.3)">
-                <button
-                  onClick={() => handleDemoClick("Dramatic zoom in, background blur increases, energetic camera movement")}
-                  className="group glass-card hover:border-yellow-500/50 rounded-2xl p-6 text-left transition-all w-full h-full"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-yellow-500/30">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors">Advertising</h3>
-                  <p className="text-slate-400 text-sm mb-3">Drive clicks and conversions with motion</p>
-                  <p className="text-yellow-400 text-xs font-semibold">Click to try</p>
-                </button>
-              </TiltCard>
-            </div>
-          </div>
-
-          <FAQ />
-
-          <div className="relative glass-card border-emerald-500/30 rounded-3xl p-12 md:p-16 text-center overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/30 via-cyan-900/20 to-teal-900/30"></div>
-            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
-            <div className="max-w-3xl mx-auto relative">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl mb-8 shadow-2xl shadow-emerald-500/50 animate-pulse-glow">
-                <Sparkles className="w-10 h-10 text-white" />
+            <div className="flex flex-wrap gap-6 justify-center items-center text-slate-400 text-sm">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span>No credit card</span>
               </div>
-
-              <h2 className="text-4xl md:text-5xl font-black mb-6">
-                <span className="text-gradient-emerald animate-gradient">
-                  Start Creating Today
-                </span>
-              </h2>
-
-              <p className="text-xl text-slate-300 mb-10 leading-relaxed">
-                Join 500+ creators transforming static images into engaging videos.
-                Get started in seconds.
-              </p>
-
-              <MagneticButton
-                onClick={onGetStarted}
-                className="group btn-holographic animate-gradient text-white px-12 py-6 rounded-2xl font-black text-xl shadow-2xl shadow-cyan-500/50 hover:shadow-cyan-500/70 hover:scale-105 transition-all inline-flex items-center space-x-4"
-              >
-                <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform" />
-                <span>Create Your First Video</span>
-              </MagneticButton>
-
-              <div className="flex flex-wrap gap-6 justify-center items-center mt-8 text-slate-400 text-sm">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span>HD quality</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
-                  <span>Commercial use</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-cyan-400" />
-                  <span>Secure & private</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span>Cancel anytime</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-cyan-400" />
+                <span>30-day guarantee</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <FAQ />
+
+      <footer className="border-t border-slate-800 py-12 bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <div className="mb-6">
+            <div className="inline-flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-cyan-400 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <span className="font-bold text-white text-xl">S</span>
+              </div>
+              <span className="text-2xl font-bold text-gradient-emerald">Smart Animator</span>
+            </div>
+            <p className="text-slate-400 text-sm max-w-md mx-auto">
+              Transform static images into dynamic videos with AI. Powered by Google Veo 3.1.
+            </p>
+          </div>
+          <div className="text-slate-500 text-sm">
+            <p>Built with React & Tailwind CSS</p>
+            <p className="mt-2">© 2025 Smart Animator. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
