@@ -12,12 +12,17 @@
     "@google/generative-ai": "^0.21.0",
     "@supabase/supabase-js": "^2.83.0",
     "@tailwindcss/postcss": "^4.1.17",
+    "bullmq": "^5.64.1",
+    "ioredis": "^5.8.2",
+    "nodemailer": "^7.0.10",
+    "ollama": "^0.6.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@netlify/functions": "^5.1.0",
     "@types/node": "^22.19.1",
+    "@types/nodemailer": "^7.0.4",
     "@vitejs/plugin-react": "^5.1.1",
     "tailwindcss": "^4.1.17",
     "typescript": "~5.8.2",

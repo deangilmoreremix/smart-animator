@@ -5,9 +5,11 @@ import LandingPage from './components/LandingPage';
 import History from './components/History';
 import AuthPage from './components/AuthPage';
 import AdminPanel from './components/AdminPanel';
-import { RefreshCw, Film, Clock, LogOut, User, Shield } from './components/Icons';
+import { ContactsManager } from './components/ContactsManager';
+import { DistributionPage } from './components/DistributionPage';
+import { RefreshCw, Film, Clock, LogOut, User, Shield, Users, Send } from './components/Icons';
 
-type Page = 'landing' | 'animator' | 'history' | 'admin';
+type Page = 'landing' | 'animator' | 'history' | 'contacts' | 'distribution' | 'admin';
 
 const AppContent: React.FC = () => {
   const { user, loading, signOut, isSuperAdmin } = useAuth();
@@ -68,6 +70,10 @@ const AppContent: React.FC = () => {
         return <VeoAnimator initialPrompt={demoPrompt} />;
       case 'history':
         return <History />;
+      case 'contacts':
+        return <ContactsManager />;
+      case 'distribution':
+        return <DistributionPage />;
       case 'admin':
         return <AdminPanel />;
       default:
@@ -125,6 +131,28 @@ const AppContent: React.FC = () => {
                 <Clock className="w-4 h-4 inline mr-2" />
                 History
               </button>
+              <button
+                onClick={() => setCurrentPage('contacts')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  currentPage === 'contacts'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <Users className="w-4 h-4 inline mr-2" />
+                Contacts
+              </button>
+              <button
+                onClick={() => setCurrentPage('distribution')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  currentPage === 'distribution'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <Send className="w-4 h-4 inline mr-2" />
+                Distribute
+              </button>
               {isSuperAdmin && (
                 <button
                   onClick={() => setCurrentPage('admin')}
@@ -161,10 +189,10 @@ const AppContent: React.FC = () => {
         </div>
 
         <div className="md:hidden border-t border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 py-2 flex space-x-2">
+          <div className="max-w-7xl mx-auto px-4 py-2 flex space-x-2 overflow-x-auto">
             <button
               onClick={() => setCurrentPage('animator')}
-              className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 currentPage === 'animator'
                   ? 'bg-blue-600 text-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -175,7 +203,7 @@ const AppContent: React.FC = () => {
             </button>
             <button
               onClick={() => setCurrentPage('history')}
-              className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 currentPage === 'history'
                   ? 'bg-blue-600 text-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -184,10 +212,32 @@ const AppContent: React.FC = () => {
               <Clock className="w-4 h-4 inline mr-2" />
               History
             </button>
+            <button
+              onClick={() => setCurrentPage('contacts')}
+              className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                currentPage === 'contacts'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Users className="w-4 h-4 inline mr-2" />
+              Contacts
+            </button>
+            <button
+              onClick={() => setCurrentPage('distribution')}
+              className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                currentPage === 'distribution'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Send className="w-4 h-4 inline mr-2" />
+              Distribute
+            </button>
             {isSuperAdmin && (
               <button
                 onClick={() => setCurrentPage('admin')}
-                className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   currentPage === 'admin'
                     ? 'bg-emerald-600 text-white'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
