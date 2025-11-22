@@ -7,6 +7,9 @@ mkdir -p dist
 echo "Copying static files..."
 cp index.html dist/
 
+echo "Copying CSS..."
+cp index.css dist/index.css
+
 echo "Building TypeScript/React with esbuild..."
 npx esbuild index.tsx --bundle --outfile=dist/index.js \
   --loader:.tsx=tsx --loader:.ts=tsx --loader:.css=empty \
@@ -18,7 +21,7 @@ npx esbuild index.tsx --bundle --outfile=dist/index.js \
   --define:import.meta.env.VITE_API_KEY='"'$VITE_API_KEY'"' \
   --define:import.meta.env.VITE_GEMINI_API_KEY='"'$VITE_GEMINI_API_KEY'"'
 
-echo "Copying CSS..."
-cp index.css dist/
+echo "Updating HTML references..."
+sed -i 's/index\.tsx/index.js/g' dist/index.html
 
 echo "Build complete!"
