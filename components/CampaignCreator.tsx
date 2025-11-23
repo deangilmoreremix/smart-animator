@@ -15,6 +15,7 @@ const CampaignCreator: React.FC<CampaignCreatorProps> = ({ onComplete, onCancel 
   const [step, setStep] = useState(1);
   const [campaignName, setCampaignName] = useState('');
   const [tier, setTier] = useState<'basic' | 'smart' | 'advanced'>('basic');
+  const [baseScript, setBaseScript] = useState('');
   const [csvText, setCsvText] = useState('');
   const [goal, setGoal] = useState('Schedule a call');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -46,6 +47,7 @@ const CampaignCreator: React.FC<CampaignCreatorProps> = ({ onComplete, onCancel 
       const campaign = await campaignService.createCampaign(user.id, {
         name: campaignName,
         personalization_tier: tier,
+        template_script: baseScript,
         message_template: goal
       });
 
@@ -54,8 +56,10 @@ const CampaignCreator: React.FC<CampaignCreatorProps> = ({ onComplete, onCancel 
       const recipients = campaignService.parseCSV(csvText);
       await campaignService.addRecipients(campaign.id, recipients);
 
-      await batchProcessingService.processCampaignTier1(
+      await batchProcessingService.processCampaign(
         campaign.id,
+        tier,
+        baseScript,
         goal,
         (current, total) => {
           setProgress((current / total) * 100);
@@ -108,6 +112,22 @@ const CampaignCreator: React.FC<CampaignCreatorProps> = ({ onComplete, onCancel 
                 placeholder="Q1 2024 Cold Outreach"
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">
+                Base Script (for Smart/Advanced tiers)
+              </label>
+              <textarea
+                value={baseScript}
+                onChange={(e) => setBaseScript(e.target.value)}
+                placeholder="Enter your base video script here. For Smart and Advanced tiers, this will be adapted based on each recipient's role and industry."
+                rows={4}
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                Optional for Basic tier. Recommended for Smart/Advanced tiers for role-based personalization.
+              </p>
             </div>
 
             <div>

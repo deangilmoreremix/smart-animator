@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { campaignService } from '../services/campaignService';
 import { CampaignRecipient } from '../types';
 import Button from './Button';
+import PersonalizationPreview from './PersonalizationPreview';
 import { Eye, Mail, RefreshCw } from './Icons';
 
 interface RecipientManagerProps {
@@ -13,6 +14,7 @@ const RecipientManager: React.FC<RecipientManagerProps> = ({ campaignId, onBack 
   const [recipients, setRecipients] = useState<CampaignRecipient[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null);
 
   useEffect(() => {
     loadRecipients();
@@ -55,7 +57,14 @@ const RecipientManager: React.FC<RecipientManagerProps> = ({ campaignId, onBack 
   }, {} as Record<string, number>);
 
   return (
-    <div className="space-y-6">
+    <>
+      {selectedRecipient && (
+        <PersonalizationPreview
+          recipientId={selectedRecipient}
+          onClose={() => setSelectedRecipient(null)}
+        />
+      )}
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">Campaign Recipients</h2>
@@ -146,14 +155,13 @@ const RecipientManager: React.FC<RecipientManagerProps> = ({ campaignId, onBack 
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {recipient.personalized_video_url && (
-                          <button
-                            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-                            title="View video"
-                          >
-                            <Eye className="w-4 h-4 text-slate-400" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => setSelectedRecipient(recipient.id)}
+                          className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                          title="View personalization"
+                        >
+                          <Eye className="w-4 h-4 text-slate-400" />
+                        </button>
                         {recipient.status === 'ready' && (
                           <button
                             className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
@@ -179,7 +187,8 @@ const RecipientManager: React.FC<RecipientManagerProps> = ({ campaignId, onBack 
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 

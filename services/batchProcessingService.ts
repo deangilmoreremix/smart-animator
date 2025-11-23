@@ -24,8 +24,10 @@ class BatchProcessingService {
   private readonly BATCH_SIZE = 5;
   private readonly DELAY_BETWEEN_BATCHES = 2000;
 
-  async processCampaignTier1(
+  async processCampaign(
     campaignId: string,
+    tier: 'basic' | 'smart' | 'advanced',
+    baseScript: string = '',
     goal: string = 'Schedule a call',
     onProgress?: (progress: number, total: number) => void
   ): Promise<CampaignProcessingSummary> {
@@ -45,7 +47,7 @@ class BatchProcessingService {
       const batch = recipients.slice(i, Math.min(i + this.BATCH_SIZE, recipients.length));
 
       const batchPromises = batch.map(recipient =>
-        this.processRecipientTier1(recipient, goal)
+        this.processRecipient(recipient, tier, baseScript, goal)
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
@@ -100,8 +102,10 @@ class BatchProcessingService {
     };
   }
 
-  private async processRecipientTier1(
+  private async processRecipient(
     recipient: CampaignRecipient,
+    tier: 'basic' | 'smart' | 'advanced',
+    baseScript: string,
     goal: string
   ): Promise<ProcessingResult> {
     const startTime = Date.now();
@@ -111,7 +115,20 @@ class BatchProcessingService {
         status: 'processing'
       });
 
-      const assets = await personalizationEngine.generateTier1Assets(recipient, goal);
+      let assets;
+      switch (tier) {
+        case 'basic':
+          assets = await personalizationEngine.generateTier1Assets(recipient, goal);
+          break;
+        case 'smart':
+          assets = await personalizationEngine.generateTier2Assets(recipient, baseScript, goal);
+          break;
+        case 'advanced':
+          assets = await personalizationEngine.generateTier3Assets(recipient, baseScript, goal);
+          break;
+        default:
+          assets = await personalizationEngine.generateTier1Assets(recipient, goal);
+      }
 
       await personalizationEngine.saveAssets(recipient.id, assets);
 
@@ -151,7 +168,12 @@ class BatchProcessingService {
     }
   }
 
-  async retryFailedRecipients(campaignId: string, goal: string = 'Schedule a call'): Promise<CampaignProcessingSummary> {
+  async retryFailedRecipients(
+    campaignId: string,
+    tier: 'basic' | 'smart' | 'advanced',
+    baseScript: string = '',
+    goal: string = 'Schedule a call'
+  ): Promise<CampaignProcessingSummary> {
     const failedRecipients = await campaignService.getRecipients(campaignId, 'failed');
 
     const results: ProcessingResult[] = [];
@@ -160,7 +182,7 @@ class BatchProcessingService {
     let totalCost = 0;
 
     for (const recipient of failedRecipients) {
-      const result = await this.processRecipientTier1(recipient, goal);
+      const result = await this.processRecipient(recipient, tier, baseScript, goal);
       results.push(result);
 
       if (result.status === 'success') {

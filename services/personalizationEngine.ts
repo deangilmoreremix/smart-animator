@@ -227,6 +227,231 @@ Keep it conversational and genuine. Output only the email body.`;
     }
   }
 
+  async generateIndustryVisuals(context: PersonalizationContext): Promise<GeneratedAsset> {
+    const startTime = Date.now();
+
+    const prompt = `Generate a description for industry-specific B-roll visuals for ${context.industry || 'business'} industry.
+${context.company ? `Company: ${context.company}` : ''}
+
+Create a detailed visual description (2-3 sentences) of professional imagery that would resonate with this industry.
+Examples: SaaS = modern dashboards, FinTech = security shields, Healthcare = caring professionals.
+Output ONLY the visual description.`;
+
+    try {
+      const response = await this.callGemini(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent',
+        'POST',
+        {
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        }
+      );
+
+      const visualDescription = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+                               `Professional ${context.industry || 'business'} imagery`;
+
+      return {
+        type: 'broll',
+        data: { description: visualDescription, industry: context.industry },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0.003
+      };
+    } catch (error) {
+      console.error('Error generating industry visuals:', error);
+      return {
+        type: 'broll',
+        data: { description: `Professional ${context.industry || 'business'} imagery`, industry: context.industry },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0
+      };
+    }
+  }
+
+  async generateRoleBasedMessaging(context: PersonalizationContext, baseScript: string): Promise<GeneratedAsset> {
+    const startTime = Date.now();
+
+    const prompt = `Adapt this video script for a ${context.role || 'professional'}:
+
+Base Script: ${baseScript}
+
+Recipient Role: ${context.role || 'professional'}
+Company: ${context.company || 'their company'}
+
+Rewrite to emphasize benefits most relevant to their role (executives = ROI, technical = features, sales = revenue).
+Keep it under 100 words. Output ONLY the adapted script.`;
+
+    try {
+      const response = await this.callGemini(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent',
+        'POST',
+        {
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        }
+      );
+
+      const adaptedScript = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || baseScript;
+
+      return {
+        type: 'caption',
+        data: { adaptedScript, role: context.role, baseScript },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0.004
+      };
+    } catch (error) {
+      console.error('Error generating role-based messaging:', error);
+      return {
+        type: 'caption',
+        data: { adaptedScript: baseScript, role: context.role },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0
+      };
+    }
+  }
+
+  async generatePainPointCTA(context: PersonalizationContext): Promise<GeneratedAsset> {
+    const startTime = Date.now();
+
+    const prompt = `Create a compelling CTA that addresses this specific pain point:
+Pain Point: ${context.painPoint || 'business challenges'}
+Company: ${context.company || 'their company'}
+Role: ${context.role || 'professional'}
+
+Generate ONE specific CTA (max 7 words) that directly addresses solving their pain point.
+Output ONLY the CTA text.`;
+
+    try {
+      const response = await this.callGemini(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent',
+        'POST',
+        {
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        }
+      );
+
+      const ctaText = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+                     `Solve ${context.painPoint || 'Your Challenges'}`;
+
+      return {
+        type: 'cta',
+        data: { text: ctaText, painPoint: context.painPoint },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0.002
+      };
+    } catch (error) {
+      console.error('Error generating pain point CTA:', error);
+      return {
+        type: 'cta',
+        data: { text: 'Get Started Today', painPoint: context.painPoint },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0
+      };
+    }
+  }
+
+  async generateCompanyResearchInsights(context: PersonalizationContext): Promise<GeneratedAsset> {
+    const startTime = Date.now();
+
+    const prompt = `Generate personalized company research insights for:
+Company: ${context.company || 'the company'}
+Industry: ${context.industry || 'business'}
+
+Create 2-3 sentences showing you've researched them. Include:
+1. A relevant industry trend or challenge they likely face
+2. How this relates to their specific situation
+
+Make it feel personal and researched, not generic. Output ONLY the insight text.`;
+
+    try {
+      const response = await this.callGemini(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent',
+        'POST',
+        {
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        }
+      );
+
+      const insights = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+                      `I noticed ${context.company} operates in the ${context.industry} space, which is experiencing significant transformation. This presents both challenges and opportunities for growth.`;
+
+      return {
+        type: 'caption',
+        data: { insights, company: context.company },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0.005
+      };
+    } catch (error) {
+      console.error('Error generating company insights:', error);
+      return {
+        type: 'caption',
+        data: {
+          insights: `I've been following ${context.company}'s work in ${context.industry} and thought this would be relevant.`,
+          company: context.company
+        },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0
+      };
+    }
+  }
+
+  async generateDynamicBackgroundPrompt(context: PersonalizationContext): Promise<GeneratedAsset> {
+    const startTime = Date.now();
+
+    const prompt = `Create a Veo video generation prompt for a dynamic background that matches:
+Industry: ${context.industry || 'business'}
+Company Type: ${context.company || 'professional company'}
+
+Generate a prompt for a 5-second professional background loop (abstract, ambient, no people).
+Examples: Tech = flowing data streams, Finance = elegant stock tickers, Healthcare = subtle medical patterns.
+Output ONLY the Veo prompt (under 100 words).`;
+
+    try {
+      const response = await this.callGemini(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent',
+        'POST',
+        {
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        }
+      );
+
+      const backgroundPrompt = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+                              `Subtle professional background for ${context.industry} industry with ambient motion`;
+
+      return {
+        type: 'background',
+        data: { veoPrompt: backgroundPrompt, industry: context.industry },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0.003
+      };
+    } catch (error) {
+      console.error('Error generating background prompt:', error);
+      return {
+        type: 'background',
+        data: { veoPrompt: `Professional ${context.industry} background`, industry: context.industry },
+        prompt,
+        generationTime: Date.now() - startTime,
+        cost: 0
+      };
+    }
+  }
+
   async generateTier1Assets(recipient: CampaignRecipient, goal: string = 'Schedule a call'): Promise<GeneratedAsset[]> {
     const context: PersonalizationContext = {
       firstName: recipient.first_name,
@@ -248,6 +473,69 @@ Keep it conversational and genuine. Output only the email body.`;
 
     const cta = await this.generatePersonalizedCTA(context, goal);
     assets.push(cta);
+
+    return assets;
+  }
+
+  async generateTier2Assets(recipient: CampaignRecipient, baseScript: string, goal: string = 'Schedule a call'): Promise<GeneratedAsset[]> {
+    const context: PersonalizationContext = {
+      firstName: recipient.first_name,
+      lastName: recipient.last_name || undefined,
+      company: recipient.company || undefined,
+      industry: recipient.industry || undefined,
+      role: recipient.role || undefined,
+      painPoint: recipient.pain_point || undefined,
+      customFields: recipient.custom_fields || undefined
+    };
+
+    const assets: GeneratedAsset[] = [];
+
+    const tier1Assets = await this.generateTier1Assets(recipient, goal);
+    assets.push(...tier1Assets);
+
+    if (context.industry) {
+      const industryVisuals = await this.generateIndustryVisuals(context);
+      assets.push(industryVisuals);
+    }
+
+    if (context.role && baseScript) {
+      const roleMessaging = await this.generateRoleBasedMessaging(context, baseScript);
+      assets.push(roleMessaging);
+    }
+
+    if (context.painPoint) {
+      const painPointCTA = await this.generatePainPointCTA(context);
+      assets.push(painPointCTA);
+    }
+
+    return assets;
+  }
+
+  async generateTier3Assets(recipient: CampaignRecipient, baseScript: string, goal: string = 'Schedule a call'): Promise<GeneratedAsset[]> {
+    const context: PersonalizationContext = {
+      firstName: recipient.first_name,
+      lastName: recipient.last_name || undefined,
+      company: recipient.company || undefined,
+      industry: recipient.industry || undefined,
+      role: recipient.role || undefined,
+      painPoint: recipient.pain_point || undefined,
+      customFields: recipient.custom_fields || undefined
+    };
+
+    const assets: GeneratedAsset[] = [];
+
+    const tier2Assets = await this.generateTier2Assets(recipient, baseScript, goal);
+    assets.push(...tier2Assets);
+
+    if (context.company && context.industry) {
+      const companyInsights = await this.generateCompanyResearchInsights(context);
+      assets.push(companyInsights);
+    }
+
+    if (context.industry) {
+      const backgroundPrompt = await this.generateDynamicBackgroundPrompt(context);
+      assets.push(backgroundPrompt);
+    }
 
     return assets;
   }
