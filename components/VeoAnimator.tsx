@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { AspectRatio, Resolution, GenerationMode, ReferenceImage, VideoDuration, VeoModel, ReferenceImageType } from '../types';
 import { veoService } from '../services/veoService';
 import { databaseService } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
-import ApiKeyModal from './ApiKeyModal';
 import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2 } from './Icons';
 
 interface VeoAnimatorProps {
@@ -35,17 +34,9 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savedMessage, setSavedMessage] = useState<string | null>(null);
-  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    const apiKey = localStorage.getItem('VITE_API_KEY');
-    if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-      setShowApiKeyModal(true);
-    }
-  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -143,12 +134,6 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   };
 
   const handleGenerate = async () => {
-    const apiKey = localStorage.getItem('VITE_API_KEY');
-    if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-      setShowApiKeyModal(true);
-      return;
-    }
-
     if (mode === GenerationMode.IMAGE_TO_VIDEO && (!imageFile || !imagePreview)) return;
     if (mode === GenerationMode.VIDEO_EXTENSION && (!videoFile || !videoPreview)) return;
 
@@ -276,11 +261,7 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   };
 
   return (
-    <>
-      {showApiKeyModal && (
-        <ApiKeyModal onKeySelected={() => setShowApiKeyModal(false)} />
-      )}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
         <div className="flex items-center space-x-3 mb-6">
@@ -696,7 +677,6 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
         </div>
       </div>
     </div>
-    </>
   );
 };
 

@@ -1,25 +1,9 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GenerationConfig, GenerationMode } from "../types";
 import { NetlifyClient } from "./netlifyClient";
 
 export class VeoService {
-  private ai: GoogleGenerativeAI | null = null;
-
-  private useNetlifyFunctions = import.meta.env.PROD;
-
-  private getClient(): GoogleGenerativeAI {
-    if (this.useNetlifyFunctions) {
-      throw new Error("Direct client not available in production. Use Netlify Functions.");
-    }
-    let apiKey = localStorage.getItem('VITE_API_KEY');
-    if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-      throw new Error("API Key not found. Please enter your API Key first.");
-    }
-    return new GoogleGenerativeAI(apiKey);
-  }
 
   public async generateVideo(config: GenerationConfig): Promise<string> {
-    const ai = this.getClient();
     const {
       mode,
       prompt,
@@ -114,12 +98,8 @@ export class VeoService {
 
       let operation;
 
-      if (this.useNetlifyFunctions) {
-        const generateEndpoint = `https://generativelanguage.googleapis.com/v1/models/${model}:generateVideos`;
-        operation = await NetlifyClient.callGeminiAPI(generateEndpoint, 'POST', requestParams);
-      } else {
-        operation = await ai.models.generateVideos(requestParams);
-      }
+      const generateEndpoint = `https://generativelanguage.googleapis.com/v1/models/${model}:generateVideos`;
+      operation = await NetlifyClient.callGeminiAPI(generateEndpoint, 'POST', requestParams);
 
       console.log("Operation initiated. ID:", operation.name);
 
@@ -127,12 +107,8 @@ export class VeoService {
         console.log("Polling for status...");
         await new Promise(resolve => setTimeout(resolve, 5000));
 
-        if (this.useNetlifyFunctions) {
-          const statusEndpoint = `https://generativelanguage.googleapis.com/v1/${operation.name}`;
-          operation = await NetlifyClient.callGeminiAPI(statusEndpoint, 'GET');
-        } else {
-          operation = await ai.operations.getVideosOperation({ operation: operation });
-        }
+        const statusEndpoint = `https://generativelanguage.googleapis.com/v1/${operation.name}`;
+        operation = await NetlifyClient.callGeminiAPI(statusEndpoint, 'GET');
       }
 
       console.log("Generation complete. Result:", operation.response);
@@ -143,33 +119,13 @@ export class VeoService {
         throw new Error("No video URI returned in the response.");
       }
 
-      if (this.useNetlifyFunctions) {
-        const downloadResponse = await NetlifyClient.callGeminiAPI(videoUri, 'GET');
-        const blob = new Blob([downloadResponse], { type: 'video/mp4' });
-        const objectUrl = URL.createObjectURL(blob);
-        return objectUrl;
-      } else {
-        const apiKey = localStorage.getItem('VITE_API_KEY');
-        if (!apiKey) {
-          throw new Error("API Key not found. Please enter your API Key first.");
-        }
-        const authenticatedUrl = `${videoUri}&key=${apiKey}`;
-
-        const response = await fetch(authenticatedUrl);
-        if (!response.ok) {
-          throw new Error(`Failed to download video: ${response.statusText}`);
-        }
-
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        return objectUrl;
-      }
+      const downloadResponse = await NetlifyClient.callGeminiAPI(videoUri, 'GET');
+      const blob = new Blob([downloadResponse], { type: 'video/mp4' });
+      const objectUrl = URL.createObjectURL(blob);
+      return objectUrl;
 
     } catch (error: any) {
       console.error("Veo Service Error:", error);
-      if (error.message?.includes("Requested entity was not found")) {
-         throw new Error("API Key invalid or session expired. Please select your API Key again.");
-      }
       throw error;
     }
   }
