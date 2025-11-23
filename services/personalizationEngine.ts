@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { CampaignRecipient } from '../types';
+import { safeJsonParse, safeFetch } from './apiUtils';
 
 export interface PersonalizationContext {
   firstName?: string;
@@ -24,17 +25,30 @@ class PersonalizationEngine {
   private readonly GEMINI_ENDPOINT = '/.netlify/functions/gemini-generate';
 
   private async callGemini(endpoint: string, method: string = 'POST', body?: any): Promise<any> {
-    const response = await fetch(this.GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoint, method, body })
-    });
+    try {
+      const response = await safeFetch(this.GEMINI_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint, method, body })
+      });
 
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`);
+      if (!response.ok) {
+        let errorMessage = `Gemini API error: ${response.statusText}`;
+        try {
+          const error = await safeJsonParse(response);
+          errorMessage = error.message || error.error || errorMessage;
+        } catch (parseError) {
+          const text = await response.text();
+          errorMessage = `HTTP ${response.status}: ${text.substring(0, 200)}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      return await safeJsonParse(response);
+    } catch (error) {
+      console.error('Gemini API call failed:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
   async generateBasicIntro(context: PersonalizationContext): Promise<GeneratedAsset> {

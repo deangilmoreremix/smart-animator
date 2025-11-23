@@ -1,9 +1,11 @@
+import { safeJsonParse, safeFetch } from './apiUtils';
+
 export class NetlifyClient {
   private static readonly GEMINI_FUNCTION_URL = '/.netlify/functions/gemini-generate';
 
   static async callGeminiAPI(endpoint: string, method: string = 'GET', body?: any): Promise<any> {
     try {
-      const response = await fetch(this.GEMINI_FUNCTION_URL, {
+      const response = await safeFetch(this.GEMINI_FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -16,11 +18,18 @@ export class NetlifyClient {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'API request failed');
+        let errorMessage = 'API request failed';
+        try {
+          const error = await safeJsonParse(response);
+          errorMessage = error.message || error.error || errorMessage;
+        } catch (parseError) {
+          const text = await response.text();
+          errorMessage = `HTTP ${response.status}: ${text.substring(0, 200)}`;
+        }
+        throw new Error(errorMessage);
       }
 
-      return await response.json();
+      return await safeJsonParse(response);
     } catch (error) {
       console.error('Netlify Function Error:', error);
       throw error;
