@@ -8,6 +8,13 @@
     "GEMINI_API_KEY"
   ]
 
+[dev]
+  command = "vite"
+  targetPort = 5173
+  port = 8888
+  publish = "dist"
+  autoLaunch = false
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
