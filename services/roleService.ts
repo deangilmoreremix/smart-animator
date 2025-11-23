@@ -1,7 +1,6 @@
 import { supabase } from './supabase';
 import { auditService } from './auditService';
-
-export type UserRole = 'user' | 'admin' | 'superadmin';
+import type { UserRole, UserWithRole } from '../types';
 
 export interface UserRoleData {
   id: string;

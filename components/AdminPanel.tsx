@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { roleService, UserRole } from '../services/roleService';
-import { auditService, AuditLog } from '../services/auditService';
-import { analyticsService, UserAnalytics, PlatformStats, VideoStats } from '../services/analyticsService';
+import { roleService } from '../services/roleService';
+import { auditService } from '../services/auditService';
+import { analyticsService } from '../services/analyticsService';
+import type { UserRole, UserWithRole, AuditLog, UserAnalytics, PlatformStats, VideoStats } from '../types';
 import { Shield, Users, CheckCircle, Search, Trash2, AlertCircle, X, ChevronLeft, ChevronRight, Clock, Check, Video, TrendingUp, Download } from './Icons';
-
-interface UserWithRole {
-  user_id: string;
-  email: string;
-  role: UserRole;
-}
 
 const AdminPanel: React.FC = () => {
   const [users, setUsers] = useState<UserWithRole[]>([]);

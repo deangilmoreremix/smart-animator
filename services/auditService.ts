@@ -1,16 +1,5 @@
 import { supabase } from './supabase';
-
-export interface AuditLog {
-  id: string;
-  user_id: string;
-  changed_by: string;
-  action: string;
-  old_value: string | null;
-  new_value: string | null;
-  created_at: string;
-  user_email?: string;
-  changed_by_email?: string;
-}
+import type { AuditLog } from '../types';
 
 export const auditService = {
   async logAction(

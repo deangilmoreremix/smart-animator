@@ -1,38 +1,5 @@
 import { supabase } from './supabase';
-
-export interface UserAnalytics {
-  user_id: string;
-  email: string;
-  role: string;
-  video_count: number;
-  contact_count: number;
-  campaign_count: number;
-  last_login?: string;
-  created_at: string;
-  total_storage_mb: number;
-}
-
-export interface PlatformStats {
-  total_users: number;
-  total_videos: number;
-  total_contacts: number;
-  total_campaigns: number;
-  active_users_7d: number;
-  active_users_30d: number;
-  new_users_7d: number;
-  new_users_30d: number;
-}
-
-export interface VideoStats {
-  id: string;
-  user_id: string;
-  user_email: string;
-  title: string;
-  status: string;
-  created_at: string;
-  duration: number;
-  video_url: string | null;
-}
+import type { UserAnalytics, PlatformStats, VideoStats } from '../types';
 
 export const analyticsService = {
   async getUserAnalytics(userId: string): Promise<UserAnalytics | null> {

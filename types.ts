@@ -93,3 +93,80 @@ export interface VideoGenerationResult {
   videoUrl: string; // Blob URL
   expiryTime?: number;
 }
+
+export type UserRole = 'user' | 'admin' | 'superadmin';
+
+export type UserStatus = 'active' | 'suspended' | 'banned' | 'trial';
+
+export type AuditAction = 'role_update' | 'user_delete';
+
+export interface UserWithRole {
+  user_id: string;
+  email: string;
+  role: UserRole;
+  status?: UserStatus;
+  suspension_reason?: string;
+  suspension_until?: string;
+  last_login_at?: string;
+  last_login_ip?: string;
+  notes?: string;
+}
+
+export interface UserAnalytics {
+  user_id: string;
+  email: string;
+  role: string;
+  video_count: number;
+  contact_count: number;
+  campaign_count: number;
+  last_login?: string;
+  created_at: string;
+  total_storage_mb: number;
+}
+
+export interface PlatformStats {
+  total_users: number;
+  total_videos: number;
+  total_contacts: number;
+  total_campaigns: number;
+  active_users_7d: number;
+  active_users_30d: number;
+  new_users_7d: number;
+  new_users_30d: number;
+}
+
+export interface VideoStats {
+  id: string;
+  user_id: string;
+  user_email: string;
+  title: string;
+  status: string;
+  created_at: string;
+  duration: number;
+  video_url: string | null;
+}
+
+export interface AuditLog {
+  id: string;
+  user_id: string;
+  user_email: string;
+  changed_by: string;
+  changed_by_email: string;
+  action: AuditAction;
+  old_value: string | null;
+  new_value: string | null;
+  created_at: string;
+}
+
+export interface Announcement {
+  id: string;
+  created_by: string;
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'success' | 'error';
+  target_roles: UserRole[];
+  is_active: boolean;
+  starts_at?: string;
+  ends_at?: string;
+  created_at: string;
+}
