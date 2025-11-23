@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { auditService } from './auditService';
 
 export type UserRole = 'user' | 'admin' | 'superadmin';
 
@@ -84,6 +85,14 @@ export const roleService = {
         return false;
       }
 
+      const { data: currentRoleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      const oldRole = currentRoleData?.role || 'user';
+
       const { error } = await supabase
         .from('user_roles')
         .update({ role: newRole })
@@ -93,6 +102,8 @@ export const roleService = {
         console.error('Error updating user role:', error);
         return false;
       }
+
+      await auditService.logAction(userId, 'role_update', oldRole, newRole);
 
       return true;
     } catch (error) {
@@ -115,6 +126,33 @@ export const roleService = {
       return true;
     } catch (error) {
       console.error('Error in createUserRole:', error);
+      return false;
+    }
+  },
+
+  async deleteUser(userId: string): Promise<boolean> {
+    try {
+      const isSuperAdmin = await this.isSuperAdmin();
+      if (!isSuperAdmin) {
+        console.error('Only superadmins can delete users');
+        return false;
+      }
+
+      const { data: userData } = await supabase.auth.admin.getUserById(userId);
+      const userEmail = userData?.user?.email || 'Unknown';
+
+      const { error } = await supabase.auth.admin.deleteUser(userId);
+
+      if (error) {
+        console.error('Error deleting user:', error);
+        return false;
+      }
+
+      await auditService.logAction(userId, 'user_delete', userEmail, null);
+
+      return true;
+    } catch (error) {
+      console.error('Error in deleteUser:', error);
       return false;
     }
   },
