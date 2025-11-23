@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { roleService, UserRole } from '../services/roleService';
 import { auditService, AuditLog } from '../services/auditService';
-import { Shield, Users, CheckCircle, Search, Trash2, AlertCircle, X, ChevronLeft, ChevronRight, Clock, Check } from './Icons';
+import { analyticsService, UserAnalytics, PlatformStats, VideoStats } from '../services/analyticsService';
+import { Shield, Users, CheckCircle, Search, Trash2, AlertCircle, X, ChevronLeft, ChevronRight, Clock, Check, Video, TrendingUp, Download } from './Icons';
 
 interface UserWithRole {
   user_id: string;
@@ -28,6 +29,11 @@ const AdminPanel: React.FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [bulkRole, setBulkRole] = useState<UserRole>('user');
   const [bulkUpdating, setBulkUpdating] = useState(false);
+  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'videos' | 'audit'>('users');
+  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
+  const [userAnalytics, setUserAnalytics] = useState<UserAnalytics[]>([]);
+  const [videos, setVideos] = useState<VideoStats[]>([]);
+  const [exportingData, setExportingData] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -47,13 +53,19 @@ const AdminPanel: React.FC = () => {
     setIsSuperAdmin(superAdmin);
 
     if (superAdmin) {
-      const [allUsers, logs] = await Promise.all([
+      const [allUsers, logs, stats, analytics, allVideos] = await Promise.all([
         roleService.getAllUsers(),
         auditService.getAuditLogs(50),
+        analyticsService.getPlatformStats(),
+        analyticsService.getAllUsersAnalytics(),
+        analyticsService.getAllVideos(100),
       ]);
       setUsers(allUsers);
       setFilteredUsers(allUsers);
       setAuditLogs(logs);
+      setPlatformStats(stats);
+      setUserAnalytics(analytics);
+      setVideos(allVideos);
     }
     setLoading(false);
   };
@@ -169,6 +181,36 @@ const AdminPanel: React.FC = () => {
     setBulkUpdating(false);
   };
 
+  const handleExportData = async () => {
+    setExportingData(true);
+    const csvContent = await analyticsService.exportUsersToCSV();
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    setExportingData(false);
+  };
+
+  const handleDeleteVideo = async (videoId: string) => {
+    if (!confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
+      return;
+    }
+
+    const success = await analyticsService.deleteVideo(videoId);
+    if (success) {
+      setVideos(videos.filter(v => v.id !== videoId));
+    } else {
+      alert('Failed to delete video');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
@@ -203,31 +245,95 @@ const AdminPanel: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="glass-card rounded-xl p-6">
               <Users className="w-8 h-8 text-emerald-400 mb-2" />
-              <p className="text-2xl font-bold text-white">{users.length}</p>
+              <p className="text-2xl font-bold text-white">{platformStats?.total_users || users.length}</p>
               <p className="text-slate-400 text-sm">Total Users</p>
             </div>
             <div className="glass-card rounded-xl p-6">
-              <Shield className="w-8 h-8 text-cyan-400 mb-2" />
-              <p className="text-2xl font-bold text-white">
-                {users.filter(u => u.role === 'admin').length}
-              </p>
-              <p className="text-slate-400 text-sm">Admins</p>
+              <Video className="w-8 h-8 text-cyan-400 mb-2" />
+              <p className="text-2xl font-bold text-white">{platformStats?.total_videos || 0}</p>
+              <p className="text-slate-400 text-sm">Videos Generated</p>
             </div>
             <div className="glass-card rounded-xl p-6">
-              <CheckCircle className="w-8 h-8 text-teal-400 mb-2" />
-              <p className="text-2xl font-bold text-white">
-                {users.filter(u => u.role === 'superadmin').length}
-              </p>
-              <p className="text-slate-400 text-sm">Superadmins</p>
+              <TrendingUp className="w-8 h-8 text-teal-400 mb-2" />
+              <p className="text-2xl font-bold text-white">{platformStats?.new_users_7d || 0}</p>
+              <p className="text-slate-400 text-sm">New Users (7d)</p>
             </div>
+            <div className="glass-card rounded-xl p-6">
+              <CheckCircle className="w-8 h-8 text-emerald-400 mb-2" />
+              <p className="text-2xl font-bold text-white">{platformStats?.active_users_7d || 0}</p>
+              <p className="text-slate-400 text-sm">Active Users (7d)</p>
+            </div>
+          </div>
+
+          <div className="flex gap-2 border-b border-slate-700">
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'users'
+                  ? 'text-emerald-400 border-b-2 border-emerald-400'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              User Management
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'analytics'
+                  ? 'text-emerald-400 border-b-2 border-emerald-400'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Analytics
+            </button>
+            <button
+              onClick={() => setActiveTab('videos')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'videos'
+                  ? 'text-emerald-400 border-b-2 border-emerald-400'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Videos
+            </button>
+            <button
+              onClick={() => setActiveTab('audit')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'audit'
+                  ? 'text-emerald-400 border-b-2 border-emerald-400'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Audit Logs
+            </button>
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">User Management</h2>
+        {activeTab === 'users' && (
+        <div className="glass-card rounded-2xl p-8 mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-white">User Management</h2>
+            <button
+              onClick={handleExportData}
+              disabled={exportingData}
+              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              {exportingData ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </>
+              )}
+            </button>
+          </div>
 
           <div className="flex flex-col gap-4 mb-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -419,23 +525,142 @@ const AdminPanel: React.FC = () => {
             </div>
           )}
         </div>
+        )}
 
-        <div className="glass-card rounded-2xl p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-white">Audit Log</h2>
-              <p className="text-slate-400 text-sm">Track all role changes and user deletions</p>
-            </div>
-            <button
-              onClick={() => setShowAuditLogs(!showAuditLogs)}
-              className="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors flex items-center gap-2"
-            >
-              <Clock className="w-4 h-4" />
-              {showAuditLogs ? 'Hide' : 'Show'} Logs
-            </button>
+        {activeTab === 'analytics' && (
+        <div className="glass-card rounded-2xl p-8 mt-8">
+          <h2 className="text-2xl font-bold text-white mb-6">User Analytics</h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Email</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Role</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Videos</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Contacts</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Campaigns</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Last Login</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Joined</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userAnalytics.map((user) => (
+                  <tr key={user.user_id} className="border-b border-slate-800 hover:bg-slate-800/30">
+                    <td className="py-4 px-4 text-white">{user.email}</td>
+                    <td className="py-4 px-4">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        user.role === 'superadmin'
+                          ? 'bg-emerald-500/20 text-emerald-400'
+                          : user.role === 'admin'
+                          ? 'bg-cyan-500/20 text-cyan-400'
+                          : 'bg-slate-500/20 text-slate-400'
+                      }`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-slate-300">{user.video_count}</td>
+                    <td className="py-4 px-4 text-slate-300">{user.contact_count}</td>
+                    <td className="py-4 px-4 text-slate-300">{user.campaign_count}</td>
+                    <td className="py-4 px-4 text-slate-300 text-sm">
+                      {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
+                    </td>
+                    <td className="py-4 px-4 text-slate-300 text-sm">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          {showAuditLogs && (
+          {userAnalytics.length === 0 && (
+            <div className="text-center py-12">
+              <TrendingUp className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400">No analytics data available</p>
+            </div>
+          )}
+        </div>
+        )}
+
+        {activeTab === 'videos' && (
+        <div className="glass-card rounded-2xl p-8 mt-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Video Management</h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Title</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">User</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Status</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Duration</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Created</th>
+                  <th className="text-left py-4 px-4 text-slate-400 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {videos.map((video) => (
+                  <tr key={video.id} className="border-b border-slate-800 hover:bg-slate-800/30">
+                    <td className="py-4 px-4 text-white">{video.title}</td>
+                    <td className="py-4 px-4 text-slate-300">{video.user_email}</td>
+                    <td className="py-4 px-4">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        video.status === 'completed'
+                          ? 'bg-emerald-500/20 text-emerald-400'
+                          : video.status === 'processing'
+                          ? 'bg-cyan-500/20 text-cyan-400'
+                          : video.status === 'failed'
+                          ? 'bg-red-500/20 text-red-400'
+                          : 'bg-slate-500/20 text-slate-400'
+                      }`}>
+                        {video.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-slate-300">{video.duration}s</td>
+                    <td className="py-4 px-4 text-slate-300 text-sm">
+                      {new Date(video.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="py-4 px-4 flex gap-2">
+                      {video.video_url && (
+                        <a
+                          href={video.video_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-400 hover:text-emerald-300 transition-colors p-2 hover:bg-emerald-500/10 rounded-lg"
+                          title="View video"
+                        >
+                          <Video className="w-5 h-5" />
+                        </a>
+                      )}
+                      <button
+                        onClick={() => handleDeleteVideo(video.id)}
+                        className="text-red-400 hover:text-red-300 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                        title="Delete video"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {videos.length === 0 && (
+            <div className="text-center py-12">
+              <Video className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400">No videos found</p>
+            </div>
+          )}
+        </div>
+        )}
+
+        {activeTab === 'audit' && (
+        <div className="glass-card rounded-2xl p-8 mt-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Audit Log</h2>
+
+          {(
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -490,6 +715,7 @@ const AdminPanel: React.FC = () => {
             </div>
           )}
         </div>
+        )}
       </div>
 
       {deleteModalOpen && userToDelete && (
