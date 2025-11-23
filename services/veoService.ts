@@ -11,7 +11,7 @@ export class VeoService {
     if (this.useNetlifyFunctions) {
       throw new Error("Direct client not available in production. Use Netlify Functions.");
     }
-    let apiKey = localStorage.getItem('VITE_API_KEY') || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+    let apiKey = localStorage.getItem('VITE_API_KEY');
     if (!apiKey || apiKey === 'your-gemini-api-key-here') {
       throw new Error("API Key not found. Please enter your API Key first.");
     }
@@ -149,7 +149,10 @@ export class VeoService {
         const objectUrl = URL.createObjectURL(blob);
         return objectUrl;
       } else {
-        const apiKey = localStorage.getItem('VITE_API_KEY') || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+        const apiKey = localStorage.getItem('VITE_API_KEY');
+        if (!apiKey) {
+          throw new Error("API Key not found. Please enter your API Key first.");
+        }
         const authenticatedUrl = `${videoUri}&key=${apiKey}`;
 
         const response = await fetch(authenticatedUrl);

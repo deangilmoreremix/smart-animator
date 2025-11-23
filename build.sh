@@ -22,9 +22,7 @@ npx esbuild index.tsx --bundle --outfile=dist/index.js \
   --define:process.env.NODE_ENV='"production"' \
   --define:import.meta.env.PROD='true' \
   --define:import.meta.env.VITE_SUPABASE_URL='"'$VITE_SUPABASE_URL'"' \
-  --define:import.meta.env.VITE_SUPABASE_ANON_KEY='"'$VITE_SUPABASE_ANON_KEY'"' \
-  --define:import.meta.env.VITE_API_KEY='"'$VITE_API_KEY'"' \
-  --define:import.meta.env.VITE_GEMINI_API_KEY='"'$VITE_GEMINI_API_KEY'"'
+  --define:import.meta.env.VITE_SUPABASE_ANON_KEY='"'$VITE_SUPABASE_ANON_KEY'"'
 
 echo "Updating HTML references..."
 sed -i 's/index\.tsx/index.js/g' dist/index.html
