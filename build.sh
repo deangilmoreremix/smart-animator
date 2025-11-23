@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+echo "Loading environment variables..."
+if [ -f .env ]; then
+  export $(cat .env | grep -v '^#' | grep -v '^$' | xargs)
+fi
+
 echo "Creating dist directory..."
 mkdir -p dist
 
