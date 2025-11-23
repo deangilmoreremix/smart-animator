@@ -4,7 +4,8 @@ import { veoService } from '../services/veoService';
 import { databaseService } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
-import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2 } from './Icons';
+import InlineCampaignWizard from './InlineCampaignWizard';
+import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2, Sparkles, Zap, Send } from './Icons';
 
 interface VeoAnimatorProps {
   initialPrompt?: string | null;
@@ -34,6 +35,8 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savedMessage, setSavedMessage] = useState<string | null>(null);
+  const [showPostGenerateActions, setShowPostGenerateActions] = useState(false);
+  const [showCampaignWizard, setShowCampaignWizard] = useState(false);
 
   const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -212,6 +215,8 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
         setSavedMessage('Video saved to your history!');
         setTimeout(() => setSavedMessage(null), 5000);
       }
+
+      setShowPostGenerateActions(true);
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to generate video.");
@@ -238,6 +243,8 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
     setError(null);
     setElapsedTime(0);
     setPrompt("A close-up video of the character speaking and making natural facial expressions.");
+    setShowPostGenerateActions(false);
+    setShowCampaignWizard(false);
     setNegativePrompt("");
     setCameraMotion("");
     setCinematicStyle("");
@@ -261,7 +268,17 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    <>
+      {showCampaignWizard && videoUrl && (
+        <InlineCampaignWizard
+          videoUrl={videoUrl}
+          onClose={() => setShowCampaignWizard(false)}
+          onComplete={() => {
+            window.location.hash = '#history';
+          }}
+        />
+      )}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
         <div className="flex items-center space-x-3 mb-6">
@@ -675,8 +692,65 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
             </div>
           )}
         </div>
+
+        {showPostGenerateActions && videoUrl && (
+          <div className="mt-6 bg-gradient-to-br from-blue-950/30 to-purple-950/30 border border-blue-800/30 rounded-2xl p-6 animate-fade-in">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">What's Next?</h3>
+                <p className="text-slate-400 text-sm">Choose how to use your video</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                onClick={() => {
+                  setShowPostGenerateActions(false);
+                  setSavedMessage('Video saved to your library!');
+                }}
+                className="group bg-slate-900/50 hover:bg-slate-900 border border-slate-700 hover:border-blue-600 rounded-xl p-4 transition-all text-left"
+              >
+                <div className="w-12 h-12 rounded-lg bg-blue-600/10 group-hover:bg-blue-600/20 flex items-center justify-center mb-3 transition-colors">
+                  <Download className="w-6 h-6 text-blue-400" />
+                </div>
+                <h4 className="text-white font-semibold mb-1">Save to Library</h4>
+                <p className="text-slate-400 text-sm">Download and access later from History</p>
+              </button>
+
+              <button
+                onClick={() => setShowCampaignWizard(true)}
+                className="group bg-slate-900/50 hover:bg-slate-900 border border-slate-700 hover:border-purple-600 rounded-xl p-4 transition-all text-left relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 bg-gradient-to-bl from-purple-600/10 to-transparent w-24 h-24 rounded-bl-3xl" />
+                <div className="w-12 h-12 rounded-lg bg-purple-600/10 group-hover:bg-purple-600/20 flex items-center justify-center mb-3 transition-colors relative z-10">
+                  <Zap className="w-6 h-6 text-purple-400" />
+                </div>
+                <h4 className="text-white font-semibold mb-1 flex items-center gap-2">
+                  Personalize for Multiple
+                  <span className="text-xs bg-purple-600/20 text-purple-300 px-2 py-0.5 rounded-full">Recommended</span>
+                </h4>
+                <p className="text-slate-400 text-sm">Create customized versions with AI</p>
+              </button>
+
+              <button
+                onClick={() => window.location.hash = '#distribution'}
+                className="group bg-slate-900/50 hover:bg-slate-900 border border-slate-700 hover:border-green-600 rounded-xl p-4 transition-all text-left"
+              >
+                <div className="w-12 h-12 rounded-lg bg-green-600/10 group-hover:bg-green-600/20 flex items-center justify-center mb-3 transition-colors">
+                  <Send className="w-6 h-6 text-green-400" />
+                </div>
+                <h4 className="text-white font-semibold mb-1">Send to Contacts</h4>
+                <p className="text-slate-400 text-sm">Distribute to your contact list</p>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
+    </>
   );
 };
 

@@ -7,19 +7,15 @@ import AuthPage from './components/AuthPage';
 import AdminPanel from './components/AdminPanel';
 import { ContactsManager } from './components/ContactsManager';
 import { DistributionPage } from './components/DistributionPage';
-import CampaignDashboard from './components/CampaignDashboard';
-import CampaignCreator from './components/CampaignCreator';
-import RecipientManager from './components/RecipientManager';
-import { RefreshCw, Film, Clock, LogOut, User, Shield, Users, Send, Zap } from './components/Icons';
+import { RefreshCw, Film, Clock, LogOut, User, Shield, Users, Send } from './components/Icons';
 
-type Page = 'landing' | 'animator' | 'history' | 'contacts' | 'distribution' | 'admin' | 'campaigns' | 'campaign-create' | 'campaign-view';
+type Page = 'landing' | 'animator' | 'history' | 'contacts' | 'distribution' | 'admin';
 
 const AppContent: React.FC = () => {
   const { user, loading, signOut, isSuperAdmin } = useAuth();
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [demoPrompt, setDemoPrompt] = useState<string | null>(null);
   const [showAuthPage, setShowAuthPage] = useState(false);
-  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
 
   const handleDemoClick = (prompt: string) => {
     if (!user) {
@@ -78,33 +74,6 @@ const AppContent: React.FC = () => {
         return <ContactsManager />;
       case 'distribution':
         return <DistributionPage />;
-      case 'campaigns':
-        return (
-          <CampaignDashboard
-            onCreateNew={() => setCurrentPage('campaign-create')}
-            onViewCampaign={(id) => {
-              setSelectedCampaignId(id);
-              setCurrentPage('campaign-view');
-            }}
-          />
-        );
-      case 'campaign-create':
-        return (
-          <CampaignCreator
-            onComplete={(id) => {
-              setSelectedCampaignId(id);
-              setCurrentPage('campaign-view');
-            }}
-            onCancel={() => setCurrentPage('campaigns')}
-          />
-        );
-      case 'campaign-view':
-        return selectedCampaignId ? (
-          <RecipientManager
-            campaignId={selectedCampaignId}
-            onBack={() => setCurrentPage('campaigns')}
-          />
-        ) : null;
       case 'admin':
         return <AdminPanel />;
       default:
@@ -172,17 +141,6 @@ const AppContent: React.FC = () => {
               >
                 <Users className="w-4 h-4 inline mr-2" />
                 Contacts
-              </button>
-              <button
-                onClick={() => setCurrentPage('campaigns')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  currentPage.startsWith('campaign')
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                <Zap className="w-4 h-4 inline mr-2" />
-                Campaigns
               </button>
               <button
                 onClick={() => setCurrentPage('distribution')}
@@ -264,17 +222,6 @@ const AppContent: React.FC = () => {
             >
               <Users className="w-4 h-4 inline mr-2" />
               Contacts
-            </button>
-            <button
-              onClick={() => setCurrentPage('campaigns')}
-              className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                currentPage.startsWith('campaign')
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              <Zap className="w-4 h-4 inline mr-2" />
-              Campaigns
             </button>
             <button
               onClick={() => setCurrentPage('distribution')}
