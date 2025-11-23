@@ -170,3 +170,101 @@ export interface Announcement {
   ends_at?: string;
   created_at: string;
 }
+
+export type PersonalizationTier = 'basic' | 'smart' | 'advanced';
+export type CampaignStatus = 'draft' | 'scheduled' | 'sending' | 'completed' | 'cancelled';
+export type RecipientStatus = 'pending' | 'processing' | 'ready' | 'sent' | 'failed' | 'viewed';
+
+export interface Campaign {
+  id: string;
+  user_id: string;
+  name: string;
+  video_id?: string;
+  master_video_id?: string;
+  template_script?: string;
+  personalization_tier?: PersonalizationTier;
+  personalization_fields?: string[];
+  visual_style?: Record<string, any>;
+  subject?: string;
+  message_template?: string;
+  channels?: string[];
+  status?: CampaignStatus;
+  processing_status?: string;
+  total_recipients?: number;
+  scheduled_at?: string;
+  started_at?: string;
+  completed_at?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface CampaignRecipient {
+  id: string;
+  campaign_id: string;
+  contact_id?: string;
+  email: string;
+  first_name: string;
+  last_name?: string;
+  company?: string;
+  role?: string;
+  industry?: string;
+  pain_point?: string;
+  custom_fields?: Record<string, any>;
+  personalized_video_url?: string;
+  thumbnail_url?: string;
+  status: RecipientStatus;
+  generation_cost?: number;
+  processing_time_ms?: number;
+  error_message?: string;
+  sent_at?: string;
+  viewed_at?: string;
+  view_count: number;
+  watch_duration_seconds?: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface PersonalizationAsset {
+  id: string;
+  recipient_id: string;
+  asset_type: 'intro' | 'overlay' | 'cta' | 'broll' | 'caption' | 'thumbnail' | 'background';
+  asset_url?: string;
+  asset_data?: Record<string, any>;
+  gemini_prompt_used: string;
+  generation_time_ms: number;
+  cost?: number;
+  created_at: string;
+}
+
+export interface CampaignAnalytics {
+  id: string;
+  campaign_id: string;
+  total_recipients: number;
+  videos_generated: number;
+  videos_sent: number;
+  total_views: number;
+  unique_views: number;
+  avg_watch_time_seconds?: number;
+  completion_rate?: number;
+  response_rate?: number;
+  total_cost: number;
+  avg_generation_time_ms?: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface PersonalizationTemplate {
+  id: string;
+  user_id: string;
+  template_name: string;
+  description?: string;
+  use_case: 'cold_outreach' | 'abm' | 'onboarding' | 'follow_up' | 'nurture';
+  personalization_tier: PersonalizationTier;
+  default_fields: string[];
+  script_template: string;
+  visual_style?: Record<string, any>;
+  is_public: boolean;
+  usage_count: number;
+  created_at: string;
+  updated_at?: string;
+}
