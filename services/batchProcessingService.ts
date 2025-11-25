@@ -2,6 +2,8 @@ import { campaignService } from './campaignService';
 import { personalizationEngine } from './personalizationEngine';
 import { veoService } from './veoService';
 import { supabase } from './supabase';
+import { rateLimitService } from './rateLimitService';
+import { errorHandler, ErrorCategory, ErrorSeverity } from './errorHandler';
 import { CampaignRecipient, GenerationConfig, GenerationMode } from '../types';
 
 export interface ProcessingResult {
@@ -113,6 +115,8 @@ class BatchProcessingService {
     const startTime = Date.now();
 
     try {
+      await rateLimitService.enforceRateLimit('video-generation');
+
       await campaignService.updateRecipient(recipient.id, {
         status: 'processing'
       });

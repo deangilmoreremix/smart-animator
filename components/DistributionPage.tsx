@@ -159,7 +159,12 @@ export const DistributionPage: React.FC = () => {
             selectedVideo.video_url || '',
             selectedVideo.title,
             personalizedMessage,
-            contact.first_name
+            contact.first_name,
+            {
+              sendId: send.id,
+              campaignId: campaign.id,
+              recipientId: contact.id
+            }
           );
 
           const result = await emailService.sendEmail({

@@ -93,8 +93,23 @@ class EmailService {
     videoUrl: string,
     videoTitle: string,
     personalizedMessage: string,
-    recipientName?: string
+    recipientName?: string,
+    trackingParams?: { recipientId?: string; campaignId?: string; sendId?: string }
   ): string {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    let trackedVideoUrl = videoUrl;
+    let trackingPixel = '';
+
+    if (trackingParams && supabaseUrl) {
+      const trackingQuery = new URLSearchParams();
+      if (trackingParams.recipientId) trackingQuery.set('recipient', trackingParams.recipientId);
+      if (trackingParams.campaignId) trackingQuery.set('campaign', trackingParams.campaignId);
+      if (trackingParams.sendId) trackingQuery.set('send', trackingParams.sendId);
+
+      trackedVideoUrl = `${supabaseUrl}/functions/v1/track-click?url=${encodeURIComponent(videoUrl)}&${trackingQuery.toString()}`;
+
+      trackingPixel = `<img src="${supabaseUrl}/functions/v1/track-open?${trackingQuery.toString()}" width="1" height="1" style="display:none;" alt="" />`;
+    }
     return `
 <!DOCTYPE html>
 <html>
@@ -121,14 +136,14 @@ class EmailService {
           <tr>
             <td style="padding: 0 40px 40px 40px;">
               <div style="position: relative; width: 100%; padding-bottom: 56.25%; background-color: #000; border-radius: 8px; overflow: hidden;">
-                <a href="${videoUrl}" style="display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                <a href="${trackedVideoUrl}" style="display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
                   <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background-color: rgba(59, 130, 246, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <div style="width: 0; height: 0; border-left: 25px solid white; border-top: 15px solid transparent; border-bottom: 15px solid transparent; margin-left: 8px;"></div>
                   </div>
                 </a>
               </div>
               <div style="text-align: center; margin-top: 24px;">
-                <a href="${videoUrl}" style="display: inline-block; padding: 14px 32px; background-color: #3b82f6; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                <a href="${trackedVideoUrl}" style="display: inline-block; padding: 14px 32px; background-color: #3b82f6; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
                   Watch Video
                 </a>
               </div>
@@ -140,6 +155,7 @@ class EmailService {
               <p style="margin: 0; font-size: 14px; color: #6b7280; text-align: center;">
                 Created with Smart Animator
               </p>
+              ${trackingPixel}
             </td>
           </tr>
 
