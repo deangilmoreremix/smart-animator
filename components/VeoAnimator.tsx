@@ -5,6 +5,7 @@ import { databaseService } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Button from './Button';
 import InlineCampaignWizard from './InlineCampaignWizard';
+import Tooltip from './Tooltip';
 import { UploadCloud, Video, Film, Download, XCircle, Loader2, Plus, Trash2, Sparkles, Zap, Send } from './Icons';
 
 interface VeoAnimatorProps {
@@ -287,7 +288,13 @@ const VeoAnimator: React.FC<VeoAnimatorProps> = ({ initialPrompt }) => {
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-400 mb-3">Generation Mode</label>
+          <div className="flex items-center gap-2 mb-3">
+            <label className="block text-sm font-medium text-slate-400">Generation Mode</label>
+            <Tooltip
+              content="Choose how you want to create your video: from text, from an image, or by extending an existing video."
+              estimatedTime="30-60s per video"
+            />
+          </div>
           <div className="grid grid-cols-3 gap-2 bg-slate-950 p-1 rounded-lg border border-slate-700">
             <button
               className={`py-2 px-3 rounded-md text-xs font-medium transition-all ${mode === GenerationMode.TEXT_TO_VIDEO ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
