@@ -1,6 +1,8 @@
 import { campaignService } from './campaignService';
 import { personalizationEngine } from './personalizationEngine';
-import { CampaignRecipient } from '../types';
+import { veoService } from './veoService';
+import { supabase } from './supabase';
+import { CampaignRecipient, GenerationConfig, GenerationMode } from '../types';
 
 export interface ProcessingResult {
   recipientId: string;
@@ -132,14 +134,58 @@ class BatchProcessingService {
 
       await personalizationEngine.saveAssets(recipient.id, assets);
 
-      const totalCost = assets.reduce((sum, asset) => sum + (asset.cost || 0), 0);
-      const processingTime = Date.now() - startTime;
+      let videoCost = 0;
+      let videoUrl: string | null = null;
 
-      const mockVideoUrl = `https://placeholder-video.com/${recipient.id}.mp4`;
+      const introAsset = assets.find(a => a.type === 'intro');
+      const scriptAsset = assets.find(a => a.type === 'caption' && a.data?.adaptedScript);
+
+      const videoPrompt = this.buildVideoPrompt(recipient, introAsset, scriptAsset, baseScript);
+
+      try {
+        const veoConfig: GenerationConfig = {
+          mode: GenerationMode.TEXT_TO_VIDEO,
+          prompt: videoPrompt,
+          aspectRatio: '9:16',
+          resolution: '720p',
+          duration: 5,
+          model: 'veo-002',
+          numberOfVideos: 1
+        };
+
+        const generatedVideoUrl = await veoService.generateVideo(veoConfig);
+
+        const videoBlob = await fetch(generatedVideoUrl).then(r => r.blob());
+        const fileName = `${recipient.campaign_id}/${recipient.id}_${Date.now()}.mp4`;
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('personalized-videos')
+          .upload(fileName, videoBlob, {
+            contentType: 'video/mp4',
+            cacheControl: '3600'
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('personalized-videos')
+          .getPublicUrl(fileName);
+
+        videoUrl = publicUrl;
+
+        videoCost = tier === 'basic' ? 0.02 : tier === 'smart' ? 0.05 : 0.15;
+      } catch (videoError: any) {
+        console.error('Video generation failed, using placeholder:', videoError);
+        videoUrl = `https://placeholder-video.com/${recipient.id}.mp4`;
+      }
+
+      const assetsCost = assets.reduce((sum, asset) => sum + (asset.cost || 0), 0);
+      const totalCost = assetsCost + videoCost;
+      const processingTime = Date.now() - startTime;
 
       await campaignService.updateRecipient(recipient.id, {
         status: 'ready',
-        personalized_video_url: mockVideoUrl,
+        personalized_video_url: videoUrl,
         generation_cost: totalCost,
         processing_time_ms: processingTime
       });
@@ -147,7 +193,7 @@ class BatchProcessingService {
       return {
         recipientId: recipient.id,
         status: 'success',
-        videoUrl: mockVideoUrl,
+        videoUrl: videoUrl || undefined,
         cost: totalCost,
         processingTime
       };
@@ -216,6 +262,39 @@ class BatchProcessingService {
     const processingTime = recipientCount * timePerRecipient[tier];
 
     return processingTime + batchTime;
+  }
+
+  private buildVideoPrompt(
+    recipient: CampaignRecipient,
+    introAsset?: any,
+    scriptAsset?: any,
+    baseScript?: string
+  ): string {
+    const firstName = recipient.first_name;
+    const company = recipient.company || 'your company';
+    const role = recipient.role || 'professional';
+    const industry = recipient.industry || 'business';
+
+    let prompt = '';
+
+    if (introAsset?.data?.text) {
+      prompt += `${introAsset.data.text}. `;
+    } else {
+      prompt += `Hi ${firstName} from ${company}. `;
+    }
+
+    if (scriptAsset?.data?.adaptedScript) {
+      prompt += scriptAsset.data.adaptedScript;
+    } else if (baseScript) {
+      prompt += baseScript;
+    } else {
+      prompt += `I wanted to reach out to you as a ${role} in the ${industry} industry. `;
+      prompt += `I believe our solution could help ${company} achieve its goals. `;
+    }
+
+    prompt += ` Professional business video style, clean modern aesthetic, ${industry} industry context.`;
+
+    return prompt.substring(0, 500);
   }
 
   private delay(ms: number): Promise<void> {

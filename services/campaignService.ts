@@ -114,6 +114,68 @@ class CampaignService {
     }
   }
 
+  async pauseCampaign(campaignId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .update({
+          processing_status: 'paused',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', campaignId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error pausing campaign:', error);
+      return false;
+    }
+  }
+
+  async resumeCampaign(campaignId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .update({
+          processing_status: 'processing',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', campaignId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error resuming campaign:', error);
+      return false;
+    }
+  }
+
+  async cancelCampaign(campaignId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .update({
+          processing_status: 'cancelled',
+          status: 'cancelled',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', campaignId);
+
+      if (error) throw error;
+
+      await supabase
+        .from('campaign_recipients')
+        .update({ status: 'cancelled' })
+        .eq('campaign_id', campaignId)
+        .eq('status', 'pending');
+
+      return true;
+    } catch (error) {
+      console.error('Error cancelling campaign:', error);
+      return false;
+    }
+  }
+
   async deleteCampaign(campaignId: string): Promise<boolean> {
     try {
       const { error } = await supabase
