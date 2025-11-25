@@ -7,14 +7,7 @@ import AuthPage from './components/AuthPage';
 import AdminPanel from './components/AdminPanel';
 import { ContactsManager } from './components/ContactsManager';
 import { DistributionPage } from './components/DistributionPage';
-import WelcomeModal from './components/WelcomeModal';
-import InteractiveTour from './components/InteractiveTour';
-import QuickStartWizard from './components/QuickStartWizard';
-import CelebrationModal from './components/CelebrationModal';
-import HelpDrawer from './components/HelpDrawer';
 import { RefreshCw, Film, Clock, LogOut, User, Shield, Users, Send, HelpCircle } from './components/Icons';
-import { onboardingService } from './services/onboardingService';
-import { helpService } from './services/helpService';
 
 type Page = 'landing' | 'animator' | 'history' | 'contacts' | 'distribution' | 'admin';
 

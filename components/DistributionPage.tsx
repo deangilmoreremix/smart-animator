@@ -211,29 +211,32 @@ export const DistributionPage: React.FC = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-2">Video Distribution</h2>
+          <h2 className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">Video Distribution</h2>
           <p className="text-slate-400">Send personalized video messages to your contacts</p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowSmtpConfig(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-lg text-slate-300 hover:text-white hover:border-blue-500/50 transition-all"
           >
             <Settings className="w-5 h-5" />
             {emailService.getStatus().configured ? 'Email Configured' : 'Configure Email'}
           </button>
           {aiAvailable && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-900/30 border border-emerald-500/30 rounded-lg">
-              <Sparkles className="w-5 h-5 text-emerald-400" />
-              <span className="text-emerald-400 text-sm font-medium">AI Available</span>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/20 to-green-600/20 rounded-lg blur-lg group-hover:blur-xl transition-all" />
+              <div className="relative flex items-center gap-2 px-4 py-2 bg-emerald-900/30 backdrop-blur-xl border border-emerald-500/30 rounded-lg">
+                <Sparkles className="w-5 h-5 text-emerald-400" />
+                <span className="text-emerald-400 text-sm font-medium">AI Available</span>
+              </div>
             </div>
           )}
         </div>
       </div>
 
       {showSmtpConfig && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-slate-800/50 p-6 max-w-md w-full mx-4 shadow-2xl">
             <h3 className="text-xl font-bold text-white mb-4">Configure Email</h3>
             <div className="space-y-4">
               <div>
@@ -288,11 +291,15 @@ export const DistributionPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Send className="w-5 h-5" />
-              1. Select Video
-            </h3>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800/50 p-6 hover:border-blue-500/50 transition-all">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                  <Send className="w-4 h-4 text-blue-400" />
+                </div>
+                1. Select Video
+              </h3>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {videos.length === 0 ? (
                 <p className="text-slate-400 text-sm">No completed videos available</p>
@@ -313,14 +320,19 @@ export const DistributionPage: React.FC = () => {
                 ))
               )}
             </div>
+            </div>
           </div>
 
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                2. Select Recipients ({selectedContacts.size})
-              </h3>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 to-teal-600/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800/50 p-6 hover:border-cyan-500/50 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <div className="w-8 h-8 bg-cyan-600/20 rounded-lg flex items-center justify-center">
+                    <Users className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  2. Select Recipients ({selectedContacts.size})
+                </h3>
               <button
                 onClick={selectAll}
                 className="text-sm text-blue-400 hover:text-blue-300"
@@ -353,15 +365,20 @@ export const DistributionPage: React.FC = () => {
                 ))
               )}
             </div>
+            </div>
           </div>
         </div>
 
         <div className="space-y-6">
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Mail className="w-5 h-5" />
-              3. Customize Message
-            </h3>
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-pink-600/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800/50 p-6 hover:border-purple-500/50 transition-all">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <div className="w-8 h-8 bg-purple-600/20 rounded-lg flex items-center justify-center">
+                  <Mail className="w-4 h-4 text-purple-400" />
+                </div>
+                3. Customize Message
+              </h3>
 
             <div className="space-y-4">
               <div>
@@ -428,13 +445,16 @@ export const DistributionPage: React.FC = () => {
               </label>
 
             </div>
+            </div>
           </div>
 
-          <button
-            onClick={handleSendCampaign}
-            disabled={!selectedVideo || selectedContacts.size === 0 || sending}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/50 to-cyan-600/50 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            <button
+              onClick={handleSendCampaign}
+              disabled={!selectedVideo || selectedContacts.size === 0 || sending}
+              className="relative w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25"
+            >
             {sending ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
@@ -448,11 +468,13 @@ export const DistributionPage: React.FC = () => {
             )}
           </button>
 
+          </div>
+
           {sending && (
-            <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-              <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+            <div className="bg-slate-900/80 backdrop-blur-xl rounded-xl border border-slate-800/50 p-4">
+              <div className="w-full bg-slate-800 rounded-full h-3 overflow-hidden shadow-inner">
                 <div
-                  className="bg-blue-600 h-full transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 h-full transition-all duration-300 shadow-lg shadow-blue-500/50"
                   style={{ width: `${(progress.current / progress.total) * 100}%` }}
                 />
               </div>
