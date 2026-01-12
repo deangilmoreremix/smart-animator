@@ -35,10 +35,10 @@ Requirements:
 
 Return ONLY the 5 subject lines, one per line, no numbering.`;
 
-    const response = await openaiClient.completion(prompt, {
-      model: 'gpt-4o-mini',
-      temperature: 0.8,
-      maxTokens: 200,
+    const response = await openaiClient.responses(prompt, {
+      model: 'gpt-5-mini',
+      reasoning_effort: 'low',
+      verbosity: 'medium',
       userId,
       operationType: 'email_subject_generation'
     });

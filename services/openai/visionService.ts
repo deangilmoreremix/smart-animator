@@ -47,15 +47,16 @@ class OpenAIVisionService {
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.5,
-      maxTokens: 500,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'video_frame_analysis'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 
   async scoreVideoQuality(
@@ -91,15 +92,16 @@ Return JSON with: overall (average score), composition, lighting, clarity, engag
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.3,
-      maxTokens: 600,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'video_quality_scoring'
     });
 
-    const scores: VideoQualityScore = JSON.parse(response);
+    const scores: VideoQualityScore = JSON.parse(response.output[0].content);
 
     await supabase.from('video_quality_scores').insert({
       video_generation_id: videoGenerationId,
@@ -157,15 +159,16 @@ Return only valid JSON.`
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.5,
-      maxTokens: 600,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'thumbnail_analysis'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 
   async generateVeoPrompt(
@@ -207,15 +210,16 @@ Return JSON with: prompt, negativePrompt, suggestedSettings (object with optiona
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.7,
-      maxTokens: 500,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'veo_prompt_generation'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 
   async detectBrandElements(
@@ -263,15 +267,16 @@ Return JSON with: compliant (boolean), detectedColors (array), issues (array), s
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.3,
-      maxTokens: 500,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'brand_compliance_check'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 
   async suggestBRoll(
@@ -283,7 +288,10 @@ Return JSON with: compliant (boolean), detectedColors (array), issues (array), s
     visualPrompt: string;
     importance: 'high' | 'medium' | 'low';
   }>> {
-    const prompt = `Analyze this video script and suggest B-roll footage opportunities:
+    const messages = [
+      {
+        role: 'user',
+        content: `Analyze this video script and suggest B-roll footage opportunities:
 
 "${scriptText}"
 
@@ -293,17 +301,20 @@ For each B-roll suggestion, provide:
 - visualPrompt: detailed Veo generation prompt for the B-roll
 - importance: "high", "medium", or "low"
 
-Return JSON array of suggestions.`;
+Return JSON array of suggestions.`
+      }
+    ];
 
-    const response = await openaiClient.completion(prompt, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.6,
-      maxTokens: 800,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'broll_suggestion'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 
   async analyzeAccessibility(
@@ -354,15 +365,16 @@ Return only valid JSON.`
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.3,
-      maxTokens: 600,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'accessibility_analysis'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 
   async compareThumbnails(
@@ -399,15 +411,16 @@ Return only valid JSON.`
       }
     ];
 
-    const response = await openaiClient.chat(messages as any, {
+    const response = await openaiClient.responses({
       model: 'gpt-4o',
-      temperature: 0.4,
-      maxTokens: 800,
+      messages,
+      reasoning_effort: 'medium',
+      verbosity: 'medium',
       userId,
       operationType: 'thumbnail_comparison'
     });
 
-    return JSON.parse(response);
+    return JSON.parse(response.output[0].content);
   }
 }
 

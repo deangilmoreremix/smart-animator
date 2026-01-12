@@ -76,6 +76,13 @@ class OpenAIClient {
 
   calculateCost(model: string, inputTokens: number, outputTokens: number): number {
     const pricing: Record<string, { input: number; output: number }> = {
+      // GPT-5.2 series pricing (estimated based on patterns)
+      'gpt-5.2': { input: 0.003 / 1000, output: 0.012 / 1000 },
+      'gpt-5.2-pro': { input: 0.006 / 1000, output: 0.024 / 1000 },
+      'gpt-5.2-chat-latest': { input: 0.002 / 1000, output: 0.008 / 1000 },
+      'gpt-5-mini': { input: 0.0002 / 1000, output: 0.0008 / 1000 },
+      'gpt-5-nano': { input: 0.0001 / 1000, output: 0.0004 / 1000 },
+      // Legacy models
       'gpt-4o': { input: 0.0025 / 1000, output: 0.01 / 1000 },
       'gpt-4o-mini': { input: 0.00015 / 1000, output: 0.0006 / 1000 },
       'gpt-4-turbo': { input: 0.01 / 1000, output: 0.03 / 1000 },
@@ -84,7 +91,7 @@ class OpenAIClient {
       'o1-mini': { input: 0.003 / 1000, output: 0.012 / 1000 }
     };
 
-    const rates = pricing[model] || pricing['gpt-4o-mini'];
+    const rates = pricing[model] || pricing['gpt-5-mini'];
     return (inputTokens * rates.input) + (outputTokens * rates.output);
   }
 
@@ -96,20 +103,60 @@ class OpenAIClient {
       maxTokens?: number;
       userId?: string;
       operationType?: string;
+      reasoning?: {
+        effort?: 'none' | 'low' | 'medium' | 'high' | 'xhigh';
+        summary?: 'concise' | 'detailed';
+      };
+      text?: {
+        verbosity?: 'low' | 'medium' | 'high';
+      };
+      tools?: any[];
+      toolChoice?: any;
+      previousResponseId?: string;
     } = {}
   ): Promise<string> {
     const startTime = Date.now();
-    const model = options.model || 'gpt-4o-mini';
+    const model = options.model || 'gpt-5.2';
 
     try {
-      const result = await this.callProxy('chat', 'POST', {
+      const requestData: any = {
         model,
-        messages,
-        temperature: options.temperature ?? 0.7,
-        max_tokens: options.maxTokens ?? 1000
-      });
+        input: messages,
+      };
 
-      const content = result.choices[0].message.content;
+      // Add reasoning parameters
+      if (options.reasoning) {
+        requestData.reasoning = options.reasoning;
+      }
+
+      // Add text parameters
+      if (options.text) {
+        requestData.text = options.text;
+      }
+
+      // Add tools
+      if (options.tools && options.tools.length > 0) {
+        requestData.tools = options.tools;
+      }
+
+      // Add tool choice
+      if (options.toolChoice) {
+        requestData.tool_choice = options.toolChoice;
+      }
+
+      // Add max output tokens
+      if (options.maxTokens) {
+        requestData.max_output_tokens = options.maxTokens;
+      }
+
+      // Add previous response ID for CoT chaining
+      if (options.previousResponseId) {
+        requestData.previous_response_id = options.previousResponseId;
+      }
+
+      const result = await this.callProxy('responses', 'POST', requestData);
+
+      const content = result.output?.[0]?.content || '';
       const usage = result.usage;
 
       if (options.userId) {
@@ -117,10 +164,10 @@ class OpenAIClient {
           provider: 'openai',
           model,
           operationType: options.operationType || 'chat',
-          inputTokens: usage.prompt_tokens,
-          outputTokens: usage.completion_tokens,
-          totalTokens: usage.total_tokens,
-          costUsd: this.calculateCost(model, usage.prompt_tokens, usage.completion_tokens),
+          inputTokens: usage?.input_tokens || 0,
+          outputTokens: usage?.output_tokens || 0,
+          totalTokens: usage?.total_tokens || 0,
+          costUsd: this.calculateCost(model, usage?.input_tokens || 0, usage?.output_tokens || 0),
           latencyMs: Date.now() - startTime,
           success: true
         });
@@ -160,6 +207,115 @@ class OpenAIClient {
       [{ role: 'user', content: prompt }],
       options
     );
+  }
+
+  async createResponse(
+    input: string,
+    options: {
+      model?: string;
+      reasoning?: {
+        effort?: 'none' | 'low' | 'medium' | 'high' | 'xhigh';
+        summary?: 'concise' | 'detailed';
+      };
+      text?: {
+        verbosity?: 'low' | 'medium' | 'high';
+      };
+      tools?: any[];
+      toolChoice?: any;
+      maxOutputTokens?: number;
+      userId?: string;
+      operationType?: string;
+      previousResponseId?: string; // For CoT chaining
+    } = {}
+  ): Promise<{
+    content: string;
+    reasoning?: string;
+    usage: any;
+    responseId: string;
+  }> {
+    const startTime = Date.now();
+    const model = options.model || 'gpt-5.2';
+
+    try {
+      const requestData: any = {
+        model,
+        input,
+      };
+
+      // Add reasoning parameters
+      if (options.reasoning) {
+        requestData.reasoning = options.reasoning;
+      }
+
+      // Add text parameters
+      if (options.text) {
+        requestData.text = options.text;
+      }
+
+      // Add tools
+      if (options.tools && options.tools.length > 0) {
+        requestData.tools = options.tools;
+      }
+
+      // Add tool choice
+      if (options.toolChoice) {
+        requestData.tool_choice = options.toolChoice;
+      }
+
+      // Add max output tokens
+      if (options.maxOutputTokens) {
+        requestData.max_output_tokens = options.maxOutputTokens;
+      }
+
+      // Add previous response ID for CoT chaining
+      if (options.previousResponseId) {
+        requestData.previous_response_id = options.previousResponseId;
+      }
+
+      const result = await this.callProxy('responses', 'POST', requestData);
+
+      const content = result.output?.[0]?.content || '';
+      const reasoning = result.reasoning;
+      const usage = result.usage;
+      const responseId = result.id;
+
+      if (options.userId) {
+        await this.trackUsage(options.userId, {
+          provider: 'openai',
+          model,
+          operationType: options.operationType || 'response',
+          inputTokens: usage?.input_tokens || 0,
+          outputTokens: usage?.output_tokens || 0,
+          totalTokens: usage?.total_tokens || 0,
+          costUsd: this.calculateCost(model, usage?.input_tokens || 0, usage?.output_tokens || 0),
+          latencyMs: Date.now() - startTime,
+          success: true
+        });
+      }
+
+      return {
+        content,
+        reasoning,
+        usage,
+        responseId
+      };
+    } catch (error: any) {
+      if (options.userId) {
+        await this.trackUsage(options.userId, {
+          provider: 'openai',
+          model,
+          operationType: options.operationType || 'response',
+          inputTokens: 0,
+          outputTokens: 0,
+          totalTokens: 0,
+          costUsd: 0,
+          latencyMs: Date.now() - startTime,
+          success: false,
+          errorMessage: error.message
+        });
+      }
+      throw error;
+    }
   }
 
   async createEmbedding(

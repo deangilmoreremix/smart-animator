@@ -43,6 +43,11 @@ export const handler: Handler = async (event) => {
         result = await openai.chat.completions.create(data);
         break;
 
+      case 'responses':
+        // New GPT-5.2 Responses API
+        result = await openai.responses.create(data);
+        break;
+
       case 'embeddings':
         result = await openai.embeddings.create(data);
         break;
