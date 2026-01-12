@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import VeoAnimator from './components/VeoAnimator';
-import LandingPage from './components/LandingPage';
-import History from './components/History';
-import AuthPage from './components/AuthPage';
-import AdminPanel from './components/AdminPanel';
-import { ContactsManager } from './components/ContactsManager';
-import { DistributionPage } from './components/DistributionPage';
+import ErrorBoundary from './components/ErrorBoundary';
+import { PWAService } from './services/pwaService';
 import { RefreshCw, Film, Clock, LogOut, User, Shield, Users, Send, HelpCircle } from './components/Icons';
+
+// Lazy load components for better performance
+const VeoAnimator = lazy(() => import('./components/VeoAnimator'));
+const LandingPage = lazy(() => import('./components/LandingPage'));
+const History = lazy(() => import('./components/History'));
+const AuthPage = lazy(() => import('./components/AuthPage'));
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
+const ContactsManager = lazy(() => import('./components/ContactsManager').then(module => ({ default: module.ContactsManager })));
+const DistributionPage = lazy(() => import('./components/DistributionPage').then(module => ({ default: module.DistributionPage })));
 
 type Page = 'landing' | 'animator' | 'history' | 'contacts' | 'distribution' | 'admin';
 
@@ -79,8 +83,17 @@ const AppContent: React.FC = () => {
       }
     };
 
+    const initPWA = async () => {
+      // Register service worker for PWA features
+      await PWAService.register();
+
+      // Initialize PWA install prompt
+      await PWAService.install();
+    };
+
     initOnboarding();
     loadHelpArticles();
+    initPWA();
   }, [user, currentPage]);
 
   const handleStartTour = () => {
@@ -349,7 +362,16 @@ const AppContent: React.FC = () => {
       </header>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {renderPage()}
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-slate-400">Loading...</p>
+            </div>
+          </div>
+        }>
+          {renderPage()}
+        </Suspense>
       </main>
 
       <footer className="relative z-10 border-t border-slate-800 mt-12 py-8 bg-slate-950">
@@ -406,9 +428,11 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

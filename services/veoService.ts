@@ -1,5 +1,6 @@
 import { GenerationConfig, GenerationMode } from "../types";
 import { NetlifyClient } from "./netlifyClient";
+import { errorHandler, ErrorCategory, ErrorSeverity } from "./errorHandler";
 
 export class VeoService {
 
@@ -126,7 +127,28 @@ export class VeoService {
 
     } catch (error: any) {
       console.error("Veo Service Error:", error);
-      throw error;
+
+      // Log the error with proper categorization
+      await errorHandler.logError(
+        error,
+        ErrorCategory.VIDEO_GENERATION,
+        ErrorCategory.VIDEO_GENERATION === 'video_generation' ? ErrorSeverity.HIGH : ErrorSeverity.MEDIUM,
+        {
+          action: 'generate_video',
+          metadata: {
+            mode,
+            model,
+            aspectRatio,
+            promptLength: prompt.length,
+            hasImage: !!image,
+            hasReferenceImages: !!referenceImages?.length
+          }
+        }
+      );
+
+      // Re-throw with user-friendly message
+      const userMessage = errorHandler.getUserFriendlyMessage(error, ErrorCategory.VIDEO_GENERATION);
+      throw new Error(userMessage);
     }
   }
 }
